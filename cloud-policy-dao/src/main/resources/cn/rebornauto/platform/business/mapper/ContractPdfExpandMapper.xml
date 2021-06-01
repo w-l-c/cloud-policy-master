@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.ContractPdfMapper">
+
+ 	<select id="selectManualSigningUrl"  resultType="java.lang.String">
+	   select  manual_signing_url from t_contract_pdf 
+	   where  data_status=1 and agent_id=#{agentId}  and dai_zheng_id=#{daiZhengId}  and sign_time<![CDATA[ >]]>date_sub(now(),interval 6 day)
+	</select>
+</mapper>

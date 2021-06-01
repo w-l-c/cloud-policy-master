@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.AreaMapper">
+  <resultMap id="BaseResultMap" type="cn.rebornauto.platform.business.entity.Area">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="adcode" jdbcType="VARCHAR" property="adcode" />
+    <result column="parent_adcode" jdbcType="VARCHAR" property="parentAdcode" />
+    <result column="citycode" jdbcType="VARCHAR" property="citycode" />
+    <result column="level" jdbcType="VARCHAR" property="level" />
+    <result column="center" jdbcType="VARCHAR" property="center" />
+    <result column="pinyin" jdbcType="VARCHAR" property="pinyin" />
+    <result column="short_pinyin" jdbcType="VARCHAR" property="shortPinyin" />
+    <result column="is_deleted" jdbcType="TINYINT" property="isDeleted" />
+    <result column="enabled" jdbcType="TINYINT" property="enabled" />
+  </resultMap>
+
+    <resultMap id="RegionResult" type="cn.rebornauto.platform.business.entity.RegionOption">
+        <id column="adcode" jdbcType="VARCHAR" property="value" />
+        <result column="name" jdbcType="VARCHAR" property="label" />
+    </resultMap>
+
+    <select id="selectChildren" parameterType="string" resultMap="RegionResult">
+          select name ,adcode
+          from tb_area
+          where parent_adcode= #{adcode,jdbcType=VARCHAR}
+          and enabled=1 and is_deleted=0
+    </select>
+</mapper>

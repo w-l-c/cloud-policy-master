@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.AgentInfoMapper">
+  <resultMap id="BaseResultMap" type="cn.rebornauto.platform.business.entity.AgentInfo">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="nationality_id" jdbcType="INTEGER" property="nationalityId" />
+    <result column="agent_name" jdbcType="VARCHAR" property="agentName" />
+    <result column="openid" jdbcType="VARCHAR" property="openid" />
+    <result column="id_type" jdbcType="INTEGER" property="idType" />
+    <result column="agent_idcardno" jdbcType="VARCHAR" property="agentIdcardno" />
+    <result column="front_idcard_pic_url" jdbcType="VARCHAR" property="frontIdcardPicUrl" />
+    <result column="back_idcard_pic_url" jdbcType="VARCHAR" property="backIdcardPicUrl" />
+    <result column="header_pic_url" jdbcType="VARCHAR" property="headerPicUrl" />
+    <result column="agent_mobile" jdbcType="VARCHAR" property="agentMobile" />
+    <result column="agent_email" jdbcType="VARCHAR" property="agentEmail" />
+    <result column="agent_province" jdbcType="VARCHAR" property="agentProvince" />
+    <result column="agent_city" jdbcType="VARCHAR" property="agentCity" />
+    <result column="agent_address" jdbcType="VARCHAR" property="agentAddress" />
+    <result column="agent_qr_code_pic_url" jdbcType="VARCHAR" property="agentQrCodePicUrl" />
+    <result column="agent_qr_code_img_post_url" jdbcType="VARCHAR" property="agentQrCodeImgPostUrl" />
+    <result column="account" jdbcType="VARCHAR" property="account" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="createoper" jdbcType="VARCHAR" property="createoper" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="modifyoper" jdbcType="VARCHAR" property="modifyoper" />
+    <result column="modifytime" jdbcType="TIMESTAMP" property="modifytime" />
+  </resultMap>
+</mapper>

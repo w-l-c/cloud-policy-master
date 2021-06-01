@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.WxCustomerMapper">
+  <resultMap id="BaseResultMap" type="cn.rebornauto.platform.business.entity.WxCustomer">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="openid" jdbcType="VARCHAR" property="openid" />
+    <result column="customer_id" jdbcType="VARCHAR" property="customerId" />
+    <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+    <result column="createoper" jdbcType="VARCHAR" property="createoper" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="modifyoper" jdbcType="VARCHAR" property="modifyoper" />
+    <result column="modifytime" jdbcType="TIMESTAMP" property="modifytime" />
+  </resultMap>
+</mapper>

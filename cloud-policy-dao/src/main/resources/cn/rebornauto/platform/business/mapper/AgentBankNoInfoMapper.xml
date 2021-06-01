@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.AgentBankNoInfoMapper">
+  <resultMap id="BaseResultMap" type="cn.rebornauto.platform.business.entity.AgentBankNoInfo">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="agent_id" jdbcType="INTEGER" property="agentId" />
+   <!--  <result column="agent_bankcard_img_pic_url" jdbcType="VARCHAR" property="agentBankcardImgPicUrl" /> -->
+    <result column="agent_open_bank_no" jdbcType="VARCHAR" property="agentOpenBankNo" />
+    <result column="agent_open_bank_name" jdbcType="VARCHAR" property="agentOpenBankName" />
+    <result column="agent_open_bank_code" jdbcType="VARCHAR" property="agentOpenBankCode" />
+    <result column="agent_open_bank_mobile" jdbcType="VARCHAR" property="agentOpenBankMobile" />
+    <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="createoper" jdbcType="VARCHAR" property="createoper" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="modifyoper" jdbcType="VARCHAR" property="modifyoper" />
+    <result column="modifytime" jdbcType="TIMESTAMP" property="modifytime" />
+  </resultMap>
+</mapper>

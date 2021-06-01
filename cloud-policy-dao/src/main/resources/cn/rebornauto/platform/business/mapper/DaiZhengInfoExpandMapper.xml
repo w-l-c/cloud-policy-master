@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.DaiZhengInfoMapper">
+   <resultMap id="DaiZhengDicOptionVOMap" type="cn.rebornauto.platform.common.data.view.DaiZhengDicOptionVO">
+      <result column="id" jdbcType="INTEGER" property="key" />
+      <result column="dai_zheng_name" jdbcType="VARCHAR" property="value" />
+      <result column="data_status" jdbcType="INTEGER" property="disabled" />
+  </resultMap>
+  
+  
+  <select id="selectDaiZhengDics" resultMap="DaiZhengDicOptionVOMap">
+      select  id,dai_zheng_name,data_status
+      from t_dai_zheng_info
+  </select>
+  
+  <select id="count" resultType="Long">
+    select count(1) from t_dai_zheng_info
+      where data_status = 1
+  </select>
+  
+  
+    <resultMap id="DaiZhengInfoVoMap" type="cn.rebornauto.platform.business.vo.DaiZhengInfoVo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="dai_zheng_name" jdbcType="VARCHAR" property="daiZhengName" />
+    <result column="dai_zheng_company_name" jdbcType="VARCHAR" property="daiZhengCompanyName" />
+    <result column="dai_zheng_address" jdbcType="VARCHAR" property="daiZhengAddress" />
+    <result column="logo" jdbcType="VARCHAR" property="logo" />
+    <result column="dai_zheng_link_man" jdbcType="VARCHAR" property="daiZhengLinkMan" />
+    <result column="dai_zheng_link_mobile" jdbcType="VARCHAR" property="daiZhengLinkMobile" />
+    <result column="dai_zheng_link_email" jdbcType="VARCHAR" property="daiZhengLinkEmail" />
+    <result column="personal_tax" jdbcType="DECIMAL" property="personalTax" />
+    <result column="value_added_tax" jdbcType="DECIMAL" property="valueAddedTax" />
+    <result column="extra_tax" jdbcType="DECIMAL" property="extraTax" />
+    <result column="dai_zheng_open_bank" jdbcType="VARCHAR" property="daiZhengOpenBank" />
+    <result column="dai_zheng_open_name" jdbcType="VARCHAR" property="daiZhengOpenName" />
+    <result column="dai_zheng_open_bank_no" jdbcType="VARCHAR" property="daiZhengOpenBankNo" />
+    <result column="recharge_amount" jdbcType="DECIMAL" property="rechargeAmount" />
+    <result column="pay_amount" jdbcType="DECIMAL" property="payAmount" />
+    <result column="payAmountFin" jdbcType="VARCHAR" property="payAmountFin" />
+    <result column="left_amount" jdbcType="DECIMAL" property="leftAmount" />
+    <result column="leftAmountFin" jdbcType="VARCHAR" property="leftAmountFin" />
+     <result column="image_name" jdbcType="VARCHAR" property="imageName" />
+    <result column="seal_img_pic_url" jdbcType="VARCHAR" property="sealImgPicUrl" />
+    <result column="account" jdbcType="VARCHAR" property="account" />
+    <result column="reg_code" jdbcType="VARCHAR" property="regCode" />
+    <result column="org_code" jdbcType="VARCHAR" property="orgCode" />
+    <result column="tax_code" jdbcType="VARCHAR" property="taxCode" />
+    <result column="legal_person" jdbcType="VARCHAR" property="legalPerson" />
+    <result column="legal_person_identity_type" jdbcType="VARCHAR" property="legalPersonIdentityType" />
+    <result column="legal_person_identity" jdbcType="VARCHAR" property="legalPersonIdentity" />
+    <result column="user_type" jdbcType="VARCHAR" property="userType" />
+    <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="createoper" jdbcType="VARCHAR" property="createoper" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="modifyoper" jdbcType="VARCHAR" property="modifyoper" />
+    <result column="modifytime" jdbcType="TIMESTAMP" property="modifytime" />
+     <result column="status" jdbcType="VARCHAR" property="status" />
+  </resultMap>
+  
+  
+  <select id="list" resultMap="DaiZhengInfoVoMap">
+    select a.id,a.dai_zheng_name,a.dai_zheng_address,a.dai_zheng_company_name,a.logo,dai_zheng_link_man,a.personal_tax,
+    a.value_added_tax,a.extra_tax,a.dai_zheng_open_bank,a.dai_zheng_open_name,a.dai_zheng_open_bank_no,a.recharge_amount,
+    a.pay_amount,Format(a.pay_amount, 2) payAmountFin,a.left_amount,Format(a.left_amount, 2) leftAmountFin,a.data_status,b.status,a.seal_img_pic_url,a.dai_zheng_link_mobile,a.reg_code,a.org_code,
+    a.tax_code,a.legal_person,a.legal_person_identity_type,a.legal_person_identity,a.dai_zheng_simple_company_name,
+    a.province_adcode,a.city_adcode
+    from t_dai_zheng_info a
+    LEFT JOIN t_certificate_status b on a.id=b.dai_zheng_id
+    where a.data_status = 1 
+  </select>
+  
+  <update id="addDaiZhengQuotaById" >
+  	update t_dai_zheng_info 
+  	set pay_amount=pay_amount + #{amount,jdbcType=DECIMAL}
+  	,left_amount=left_amount - #{amount,jdbcType=DECIMAL}
+  	where id = #{daiZhengId,jdbcType=INTEGER} and data_status=1
+  </update>
+  
+  <update id="cancelDaiZhengQuotaById" >
+  	update t_dai_zheng_info 
+  	set pay_amount=pay_amount - #{amount,jdbcType=DECIMAL}
+  	,left_amount=left_amount + #{amount,jdbcType=DECIMAL}
+  	where id = #{daiZhengId,jdbcType=INTEGER} and data_status=1
+  </update>
+</mapper>

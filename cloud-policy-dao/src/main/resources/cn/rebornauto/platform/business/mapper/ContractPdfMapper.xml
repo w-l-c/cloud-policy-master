@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.ContractPdfMapper">
+  <resultMap id="BaseResultMap" type="cn.rebornauto.platform.business.entity.ContractPdf">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="agent_id" jdbcType="INTEGER" property="agentId" />
+     <result column="dai_zheng_id" jdbcType="INTEGER" property="daiZhengId" />
+    <result column="gxjjhzhbxy_id" jdbcType="VARCHAR" property="gxjjhzhbxyId" />
+    <result column="contract_number" jdbcType="VARCHAR" property="contractNumber" />
+    <result column="sign_time" jdbcType="TIMESTAMP" property="signTime" />
+    <result column="manual_signing_url" jdbcType="VARCHAR" property="ManualSigningUrl" />
+    <result column="manual_signing_time" jdbcType="TIMESTAMP" property="ManualSigningTime" />
+    <result column="gxjjhzhbxy" jdbcType="VARCHAR" property="gxjjhzhbxy" />
+    <result column="yb_zip" jdbcType="VARCHAR" property="ybZip" />
+    <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+    <result column="createoper" jdbcType="VARCHAR" property="createoper" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="modifyoper" jdbcType="VARCHAR" property="modifyoper" />
+    <result column="modifytime" jdbcType="TIMESTAMP" property="modifytime" />
+  </resultMap>
+</mapper>

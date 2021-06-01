@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.rebornauto.platform.sys.dao.SysMenuMapper" >
+
+  <sql id="Base_Column_List_M" >
+    m.id, m.menuname, m.permission, m.icon, m.router, m.menutype,
+    m.parentid, m.status, m.menulevel, m.menuorder,
+    m.createtime, m.updatetime, m.remark
+  </sql>
+
+  <select id="findSysMenuByRoleId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select DISTINCT
+    <include refid="Base_Column_List_M" />
+    from sys_menu m
+    left join  sys_role_menu r on r.menuid=m.id and m.status=1
+    where r.roleid= #{roleId,jdbcType=INTEGER}
+  </select>
+
+  <select id="findSysMenuByRoleIds" resultMap="BaseResultMap" >
+    select DISTINCT
+    <include refid="Base_Column_List_M" />
+    from sys_menu m
+    left join sys_role_menu rm on rm.menuid=m.id and m.status=1
+    left join sys_role r on rm.roleid = r.id and r.status=1
+    where rm.roleid in
+    <foreach collection="list" item="listItem" open="(" close=")" separator="," >
+             #{listItem}
+    </foreach>
+  </select>
+
+
+  <select id="findSysMenuByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select DISTINCT
+    <include refid="Base_Column_List_M" />
+    from sys_menu m
+    left join sys_role_menu rm on m.id = rm.menuid and m.status=1
+    LEFT JOIN sys_user_role ur ON ur.roleid = rm.roleid
+    LEFT JOIN sys_role r ON ur.roleid = r.id AND r.STATUS = 1
+    where ur.userid=#{userId,jdbcType=INTEGER}
+  </select>
+
+  <select id="findSysMenuByUserIdAndType" resultMap="BaseResultMap">
+    select DISTINCT
+    <include refid="Base_Column_List_M" />
+    from sys_menu m
+    left join sys_role_menu rm on m.id = rm.menuid and m.status=1
+    LEFT JOIN sys_user_role ur ON ur.roleid = rm.roleid
+    LEFT JOIN sys_role r ON ur.roleid = r.id AND r.STATUS = 1
+    where ur.userid=#{userId,jdbcType=INTEGER} and m.menutype=#{menutype,jdbcType=INTEGER}
+  </select>
+
+  <select id="findSysMenuIdsByUserIdAndType" resultType="java.lang.Integer">
+    select DISTINCT m.id
+    from sys_menu m
+    left join sys_role_menu rm on m.id = rm.menuid and m.status=1
+    LEFT JOIN sys_user_role ur ON ur.roleid = rm.roleid
+    LEFT JOIN sys_role r ON ur.roleid = r.id AND r.status = 1
+    where ur.userid=#{userId,jdbcType=INTEGER} and m.menutype=#{menutype,jdbcType=INTEGER}
+  </select>
+
+  <select id="findSysMenuIdsByUserId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    select DISTINCT m.id
+    from sys_menu m
+    left join sys_role_menu rm on m.id = rm.menuid and m.status=1
+    LEFT JOIN sys_user_role ur ON ur.roleid = rm.roleid
+    LEFT JOIN sys_role r ON ur.roleid = r.id AND r.status = 1
+    where ur.userid=#{userId,jdbcType=INTEGER}
+  </select>
+</mapper>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.sys.dao.SysEnumsMapper">
+  <resultMap id="BaseResultMap" type="cn.rebornauto.platform.sys.entity.SysEnums">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="category" jdbcType="VARCHAR" property="category" />
+    <result column="categoryname" jdbcType="VARCHAR" property="categoryname" />
+    <result column="enumvalue" jdbcType="INTEGER" property="enumvalue" />
+    <result column="literal" jdbcType="VARCHAR" property="literal" />
+    <result column="orderby" jdbcType="INTEGER" property="orderby" />
+    <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+    <result column="memo" jdbcType="VARCHAR" property="memo" />
+    <result column="createoper" jdbcType="INTEGER" property="createoper" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="modifyoper" jdbcType="INTEGER" property="modifyoper" />
+    <result column="modifytime" jdbcType="TIMESTAMP" property="modifytime" />
+  </resultMap>
+</mapper>

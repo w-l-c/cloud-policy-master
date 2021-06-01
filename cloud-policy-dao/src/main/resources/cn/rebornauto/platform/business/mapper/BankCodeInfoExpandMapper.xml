@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.BankCodeInfoMapper">
+   <resultMap id="BankDicOptionVOMap" type="cn.rebornauto.platform.common.data.view.BankDicOptionVO">
+      <result column="bank_code" jdbcType="VARCHAR" property="key" />                             
+      <result column="bank_name" jdbcType="VARCHAR" property="value" />
+      <result column="data_status" jdbcType="INTEGER" property="disabled" />
+  </resultMap>
+  
+  <select id="selectBankDics" resultMap="BankDicOptionVOMap">
+      select  bank_code,bank_name,data_status
+      from t_bank_code_info
+  </select>
+</mapper>

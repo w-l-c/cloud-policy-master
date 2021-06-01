@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.SignatureChannelConfigMapper">
+  <resultMap id="BaseResultMap" type="cn.rebornauto.platform.business.entity.SignatureChannelConfig">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="sys_switch" jdbcType="VARCHAR" property="sysSwitch" />
+    <result column="dai_zheng_id" jdbcType="INTEGER" property="daiZhengId" />
+    <result column="signature_channel_id" jdbcType="INTEGER" property="signatureChannelId" />
+    <result column="key_" jdbcType="VARCHAR" property="key" />
+    <result column="value_" jdbcType="VARCHAR" property="value" />
+    <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="createoper" jdbcType="VARCHAR" property="createoper" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="modifyoper" jdbcType="VARCHAR" property="modifyoper" />
+    <result column="modifytime" jdbcType="TIMESTAMP" property="modifytime" />
+  </resultMap>
+</mapper>

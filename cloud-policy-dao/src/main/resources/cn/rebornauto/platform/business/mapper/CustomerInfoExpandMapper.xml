@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.CustomerInfoMapper">
+	<resultMap id="CustomerVoMap" type="cn.rebornauto.platform.business.vo.CustomerVo">
+		<id column="id" jdbcType="VARCHAR" property="id" />
+		<result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+		<result column="customer_nickname" jdbcType="VARCHAR" property="customerNickname" />
+    	<result column="service_rate" jdbcType="DECIMAL" property="serviceRate" />
+		<result column="invoice_title" jdbcType="VARCHAR" property="invoiceTitle" />
+		<result column="taxpayer_number" jdbcType="VARCHAR" property="taxpayerNumber" />
+		<result column="receiver" jdbcType="VARCHAR" property="receiver" />
+		<result column="customer_open_name" jdbcType="VARCHAR" property="customerOpenName" />	
+		<result column="customer_open_bank_name" jdbcType="VARCHAR" property="customerOpenBankName" />	
+		<result column="customer_open_bank_code" jdbcType="VARCHAR" property="customerOpenBankCode" />		
+		<result column="customer_open_bank_no" jdbcType="VARCHAR" property="customerOpenBankNo" />		
+		<result column="entertime" jdbcType="VARCHAR" property="entertime" />
+		<result column="taxpayer_type" jdbcType="INTEGER" property="taxpayerType" />
+		<result column="customer_reg_address" jdbcType="VARCHAR"	property="customerRegAddress" />		
+		<result column="invoice_content" jdbcType="VARCHAR" property="invoiceContent" />
+		<result column="customer_mobile" jdbcType="VARCHAR" property="customerMobile" />
+		<result column="customer_address" jdbcType="VARCHAR" property="customerAddress" />
+		<result column="dai_zheng_id" jdbcType="INTEGER" property="daiZhengId" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="qr_code_logo_img_pic_url" jdbcType="VARCHAR" property="qrCodeLogoImgPicUrl" />	
+		<result column="qr_code_img_pic_url" jdbcType="VARCHAR" property="qrCodeImgPicUrl" />
+		<result column="tel" jdbcType="VARCHAR" property="tel" />
+		<result column="customer_sub_open_bank_name" jdbcType="VARCHAR" property="customerSubOpenBankName" />
+		<result column="invoice_demo_url" jdbcType="VARCHAR" property="invoiceDemoUrl" />
+	</resultMap>
+	<sql id="queryWhereSql">
+		<if test="q.id !=null and q.id!='' ">
+			and a.id=#{q.id,jdbcType=VARCHAR}
+		</if>
+		<if test="q.customerName !=null and q.customerName!='' ">
+			and a.customer_name LIKE CONCAT(CONCAT('%',
+			#{q.customerName,jdbcType=VARCHAR}),'%')
+		</if>
+	</sql>
+	<sql id="pageSql">
+		limit
+		#{p.offset,jdbcType=INTEGER},#{p.pageSize,jdbcType=INTEGER}
+	</sql>
+    <select id="countByQuery" resultType="int">
+		select
+	    count(*)
+		from t_customer_info a
+		where 1=1
+		<if test="q!=null">
+			<include refid="queryWhereSql" />
+		</if>
+		order by a.entertime desc
+	</select> 
+	
+	<select id="pageQuery" resultMap="CustomerVoMap">
+		select
+		a.id,a.customer_name,a.customer_nickname,a.service_rate,a.invoice_title,a.taxpayer_number,a.receiver
+		,a.customer_open_name,a.customer_open_bank_name,a.customer_open_bank_code,a.customer_open_bank_no,DATE_FORMAT(a.entertime,'%Y-%m-%d') entertime,a.taxpayer_type
+		,a.customer_reg_address,a.invoice_content,a.customer_mobile,a.customer_address,a.dai_zheng_id,a.remark,a.qr_code_logo_img_pic_url,a.qr_code_img_pic_url,a.tel
+		,a.customer_sub_open_bank_name,a.invoice_demo_url
+		from t_customer_info a
+		where 1=1
+		<if test="q!=null">
+			<include refid="queryWhereSql" />
+		</if>
+		order by a.entertime desc
+		<if test="p!=null">
+			<include refid="pageSql" />
+		</if>
+	</select> 
+</mapper>

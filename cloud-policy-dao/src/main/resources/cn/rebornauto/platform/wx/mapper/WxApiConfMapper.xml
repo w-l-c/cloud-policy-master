@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.wx.dao.WxApiConfMapper">
+  <resultMap id="BaseResultMap" type="cn.rebornauto.platform.wx.entity.WxApiConf">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="appid" jdbcType="VARCHAR" property="appid" />
+    <result column="appsecret" jdbcType="VARCHAR" property="appsecret" />
+    <result column="token" jdbcType="VARCHAR" property="token" />
+    <result column="access_token" jdbcType="VARCHAR" property="accessToken" />
+    <result column="access_token_starttime" jdbcType="TIMESTAMP" property="accessTokenStarttime" />
+    <result column="callback_domain" jdbcType="VARCHAR" property="callbackDomain" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from wx_api_conf
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cn.rebornauto.platform.wx.entity.WxApiConf">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into wx_api_conf (appid, appsecret, token, 
+      access_token, access_token_starttime, callback_domain
+      )
+    values (#{appid,jdbcType=VARCHAR}, #{appsecret,jdbcType=VARCHAR}, #{token,jdbcType=VARCHAR}, 
+      #{accessToken,jdbcType=VARCHAR}, #{accessTokenStarttime,jdbcType=TIMESTAMP}, #{callbackDomain,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="cn.rebornauto.platform.wx.entity.WxApiConf">
+    update wx_api_conf
+    set appid = #{appid,jdbcType=VARCHAR},
+      appsecret = #{appsecret,jdbcType=VARCHAR},
+      token = #{token,jdbcType=VARCHAR},
+      access_token = #{accessToken,jdbcType=VARCHAR},
+      access_token_starttime = #{accessTokenStarttime,jdbcType=TIMESTAMP},
+      callback_domain = #{callbackDomain,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, appid, appsecret, token, access_token, access_token_starttime, callback_domain
+    from wx_api_conf
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, appid, appsecret, token, access_token, access_token_starttime, callback_domain
+    from wx_api_conf
+  </select>
+
+  <select id="selectByAppid" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select id, appid, appsecret, token, access_token, access_token_starttime, callback_domain
+    from wx_api_conf
+    where appid = #{appid,jdbcType=VARCHAR} limit 1
+  </select>
+
+</mapper>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.PersonalCertificateStatusMapper">
+
+	<resultMap id="PersonalCertificateStatusVoMap" type="cn.rebornauto.platform.business.vo.PersonalCertificateStatusVo">
+		<result column="id" jdbcType="INTEGER" property="id" />
+		<result column="agent_id" jdbcType="INTEGER" property="agentId" />
+		<result column="account" jdbcType="VARCHAR" property="account" />
+		<result column="taskId" jdbcType="VARCHAR" property="taskId" />
+	</resultMap>
+	<select id="findPersonalInProcess" resultMap="PersonalCertificateStatusVoMap">
+		select id,agent_id,account,taskId
+		from t_personal_certificate_status
+		where status=1 or status=2 or status=3 
+	</select>    
+</mapper>

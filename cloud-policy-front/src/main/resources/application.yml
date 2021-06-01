@@ -1,0 +1,65 @@
+logging:
+  path: /Users/si/Desktop/logs
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 100MB
+  resources:
+      staticLocations: classpath:/static/, classpath:/assets/   #ResourceProperties.java
+  mvc:  #WebMvcProperties
+      dateFormat: yyyy-MM-dd
+  jackson:
+    dateFormat: yyyy-MM-dd
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    modal:  HTML5
+    encoding: UTF-8
+  datasource:
+#    url : jdbc:mysql://rm-uf636guq410osh7y1o.mysql.rds.aliyuncs.com:3306/cloud-policy?useUnicode=true&characterEncoding=UTF-8&&useSSL=false&serverTimezone=GMT%2B8
+#    username : test_root
+#   password : rBn20190125)Yh8!33
+#   driverClassName : com.mysql.cj.jdbc.Driver
+#############################本地环境
+    url : jdbc:mysql://127.0.0.1:3306/yunbao_tj_test?useUnicode=true&characterEncoding=UTF-8&&useSSL=false&serverTimezone=GMT%2B8
+    username : root
+    password : 123456
+    driverClassName : com.mysql.jdbc.Driver
+  cache:
+    jcache:
+      config: classpath:ehcache.xml
+
+server:
+    port: 9001
+    contextPath: /
+    servlet:
+      session:
+        timeout: 36000
+        cookie:
+          name: CLSYSSESSIONID
+          max-age: 360000
+    tomcat:
+      basedir:
+      protocol-header: x-forwarded-proto
+      remote-ip-header: x-forwarded-for
+      background-processor-delay: 30
+      accesslog:
+        enabled: false
+        accessLogEnabled: false
+
+
+mybatis:
+    mapper-locations: classpath*:cn/**/mapper/*.xml
+file:
+  upload:
+    key: default
+    local: /aliyunNAS/if
+    url: /aliyunNAS/if
+    domain: https://testfile.rebornauto.cn
+wx:
+  config:
+    applicationWxOpenid: applicationWxOpenid
+    appid: wx584cdfb684629f5a
+    appsecret: f8e1c45cced6119a218daf0057f8ef32
+    

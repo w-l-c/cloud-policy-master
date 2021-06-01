@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.MissionAgentAcceptMapper">
+
+  <resultMap id="BankInfoResultMap" type="cn.rebornauto.platform.business.vo.AgentBankNoVo">
+    <result column="agent_id" jdbcType="VARCHAR" property="agentId" />
+    <result column="agent_open_bank_no" jdbcType="VARCHAR" property="agentOpenBankNo" />
+    <result column="agent_open_bank_name" jdbcType="VARCHAR" property="agentOpenBankName" />
+  </resultMap>
+  <select id="selectByCustomerId" resultMap="BankInfoResultMap">
+    select a.agent_id,b.agent_open_bank_no
+    from t_agent_customer a
+    LEFT JOIN t_agent_bank_no_info b on a.agent_id = b.agent_id
+    where a.customer_id = #{customerId}
+  </select>
+
+  <insert id="insertList" parameterType="cn.rebornauto.platform.business.entity.MissionAgentAccept" >
+    insert into t_mission_agent_accept(mission_no, agent_id, amount, data_status,completetime, createoper, createtime)
+    VALUES
+    <foreach collection="list" item="record" separator=",">
+      (#{record.missionNo},#{record.agentId},#{record.amount},#{record.dataStatus},#{record.completetime},#{record.createoper},#{record.createtime})
+    </foreach>
+  </insert>
+
+  <resultMap id="MissionAcceptResultMap" type="cn.rebornauto.platform.business.vo.MissionAgentAcceptVo">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="mission_no" jdbcType="VARCHAR" property="missionNo" />
+    <result column="mission_name" jdbcType="VARCHAR" property="missionName" />
+    <result column="mission_remark" jdbcType="VARCHAR" property="missionRemark" />
+    <result column="agent_id" jdbcType="INTEGER" property="agentId" />
+    <result column="completetime" jdbcType="TIMESTAMP" property="completetime" />
+    <result column="amount" jdbcType="DECIMAL" property="amount" />
+    <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+    <result column="createoper" jdbcType="VARCHAR" property="createoper" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="modifyoper" jdbcType="VARCHAR" property="modifyoper" />
+    <result column="modifytime" jdbcType="TIMESTAMP" property="modifytime" />
+  </resultMap>
+
+  <sql id="query">
+    <if test="q.openid !=null and q.openid != ''">
+      and c.openid = #{q.openid}
+    </if>
+  </sql>
+  <sql id="pageQuery">
+    <if test="p.offset != null and p.pageSize != null">
+      limit #{p.offset,jdbcType=INTEGER},#{p.pageSize,jdbcType=INTEGER}
+    </if>
+  </sql>
+  <select id="selectByQuery" resultMap="MissionAcceptResultMap">
+    select
+    a.id,a.mission_no,b.mission_name,b.mission_remark,a.agent_id,a.completetime,a.amount,a.data_status,a.createoper,a.createtime,a.modifyoper,a.modifytime
+    from t_mission_agent_accept a
+    LEFT JOIN t_mission b on a.mission_no = b.mission_no
+    JOIN t_agent_info c on a.agent_id = c.id
+    WHERE a.data_status = 1 and b.data_status =1
+    <include refid="query"/>
+    ORDER BY a.id DESC
+    <include refid="pageQuery"/>
+  </select>
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.TransactionFlowMapper">
+  <resultMap id="BaseResultMap" type="cn.rebornauto.platform.business.entity.TransactionFlow">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="transaction_flow_id" jdbcType="VARCHAR" property="transactionFlowId" />
+    <result column="order_id" jdbcType="INTEGER" property="orderId" />
+    <result column="merge_id" jdbcType="VARCHAR" property="mergeId" />
+    <result column="order_detail_id" jdbcType="INTEGER" property="orderDetailId" />
+    <result column="customer_id" jdbcType="VARCHAR" property="customerId" />
+    <result column="payment_channel_id" jdbcType="INTEGER" property="paymentChannelId" />
+    <result column="dai_zheng_id" jdbcType="INTEGER" property="daiZhengId" />
+    <result column="policy_no" jdbcType="VARCHAR" property="policyNo" />
+    <result column="policy_amount" jdbcType="DECIMAL" property="policyAmount" />
+    <result column="amount" jdbcType="DECIMAL" property="amount" />
+    <result column="agent_id" jdbcType="INTEGER" property="agentId" />
+    <result column="agent_name" jdbcType="VARCHAR" property="agentName" />
+    <result column="idcardno" jdbcType="VARCHAR" property="idcardno" />
+    <result column="open_bank_no" jdbcType="VARCHAR" property="openBankNo" />
+    <result column="outtime" jdbcType="TIMESTAMP" property="outtime" />
+    <result column="source" jdbcType="VARCHAR" property="source" />
+    <result column="ft_type_id" jdbcType="INTEGER" property="ftTypeId" />
+    <result column="complete_time" jdbcType="TIMESTAMP" property="completeTime" />
+    <result column="bank_code" jdbcType="VARCHAR" property="bankCode" />
+    <result column="trade_code" jdbcType="VARCHAR" property="tradeCode" />
+    <result column="pay_status" jdbcType="INTEGER" property="payStatus" />
+    <result column="result" jdbcType="VARCHAR" property="result" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="createoper" jdbcType="VARCHAR" property="createoper" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="modifyoper" jdbcType="VARCHAR" property="modifyoper" />
+    <result column="modifytime" jdbcType="TIMESTAMP" property="modifytime" />
+  </resultMap>
+</mapper>

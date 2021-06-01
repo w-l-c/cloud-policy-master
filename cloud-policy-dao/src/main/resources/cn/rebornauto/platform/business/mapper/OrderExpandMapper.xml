@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.OrderMapper">
+
+	<resultMap id="BaseResultMapVO" type="cn.rebornauto.platform.business.entity.OrderVO">
+	    <id column="id" jdbcType="INTEGER" property="id" />
+	    <result column="customer_id" jdbcType="VARCHAR" property="customerId" />
+	    <result column="agent_commission" jdbcType="DECIMAL" property="agentCommission" />
+	    <result column="total_count" jdbcType="INTEGER" property="totalCount" />
+	    <result column="pay_status" jdbcType="INTEGER" property="payStatus" />
+	    <result column="check_status" jdbcType="INTEGER" property="checkStatus" />
+	    <result column="createoper" jdbcType="VARCHAR" property="createoper" />
+	    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+	    <result column="checkoper" jdbcType="VARCHAR" property="checkoper" />
+	    <result column="checktime" jdbcType="TIMESTAMP" property="checktime" />
+	    <result column="pay_stat" jdbcType="VARCHAR" property="payStat" />
+	    <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+	    <result column="remark" jdbcType="VARCHAR" property="remark" />
+	    <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+	    <result column="orderId" jdbcType="INTEGER" property="orderId" />
+	    <result column="dai_zheng_id" jdbcType="VARCHAR" property="daiZhengId" />
+	    <result column="dai_zheng_name" jdbcType="VARCHAR" property="daiZhengName" />
+	    <result column="agent_commission_fin" jdbcType="VARCHAR" property="agentCommissionFin" />
+	    <result column="order_status" jdbcType="INTEGER" property="orderStatus" />
+	    <result column="upload_remark" jdbcType="VARCHAR" property="uploadRemark" />
+	</resultMap>
+  
+  	<sql id="queryWhereSql">
+  		<if test="q.orderId !=null and q.orderId!='' ">
+            and a.id=#{q.orderId,jdbcType=INTEGER}
+        </if>
+        <if test="q.customerId !=null and q.customerId!='' ">
+            and a.customer_id=#{q.customerId,jdbcType=VARCHAR}
+        </if>
+        <if test="q.createtime !=null and q.createtime!='' ">
+            and DATE_FORMAT(a.createtime,'%Y-%m-%d') between #{q.startTime,jdbcType=TIMESTAMP} and
+            #{q.endTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="q.checkStatus !=null and q.checkStatus!='' ">
+            and a.check_status=#{q.checkStatus,jdbcType=INTEGER}
+        </if>
+    </sql>
+
+    <sql id="pageSql">
+       limit #{p.offset,jdbcType=INTEGER},#{p.pageSize,jdbcType=INTEGER}
+    </sql>
+
+    <select id="selectByQuery" resultMap="BaseResultMapVO">
+        select a.*,b.customer_name,a.id orderId,b.dai_zheng_id,c.dai_zheng_name,Format(a.agent_commission, 2) agent_commission_fin
+		from t_order a
+		left join t_customer_info b on a.customer_id = b.id
+		left join t_dai_zheng_info c on b.dai_zheng_id = c.id
+        WHERE
+        a.data_status = 1 and b.data_status = 1
+        <if test="q!=null">
+            <include refid="queryWhereSql"></include>
+        </if>
+        order by a.createtime desc
+        <if test="p!=null">
+            <include refid="pageSql"></include>
+        </if>
+
+    </select>
+
+    <select id="countByQuery" resultType="java.lang.Long">
+        select count(*)
+		from t_order a
+		left join t_customer_info b on a.customer_id = b.id
+        WHERE
+        a.data_status = 1 and b.data_status = 1
+        <if test="q!=null">
+            <include refid="queryWhereSql"></include>
+        </if>
+    </select>
+    
+  <update id="updateCheckinfoByOrderId" >
+    update t_order
+    set checktime = now(),checkoper = #{checkoper,jdbcType=VARCHAR}
+    ,check_status=#{checkStatus,jdbcType=INTEGER},remark=#{remark,jdbcType=VARCHAR}
+    where id = #{orderId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectStatByOrderId" resultMap="BaseResultMapVO">
+  		select if(count(t1.order_id) is null,0,count(t1.order_id)) total_count
+  				,if(sum(t1.amount) is null,0,sum(t1.amount)) agent_commission,
+  				CONCAT( CONCAT(cast(count(t2.pay_status =2) as char),'/') ,cast(count(t1.order_id) as char) ) pay_stat  
+  		from t_order_detail t1
+		left join t_transaction_flow t2 on t2.order_detail_id = t1.id
+		where t1.data_status = 1 and t1.order_id = #{orderId,jdbcType=INTEGER}
+   </select>
+   
+   
+   <update id="updateSuccCountByOrderId" parameterType="java.lang.Integer" >
+    update t_order 
+    set succ_count = succ_count+1
+    where id = #{orderId,jdbcType=INTEGER}
+  </update>
+  <update id="updateFailCountByOrderId" parameterType="java.lang.Integer" >
+    update t_order 
+    set fail_count = fail_count+1
+    where id = #{orderId,jdbcType=INTEGER}
+  </update>
+  <update id="updatePayStatByOrderId" parameterType="java.lang.Integer" >
+    update t_order 
+    set pay_stat = concat(concat(concat(concat(succ_count,'/'),merge_count),'/'),total_count)
+    where id = #{orderId,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateOrderStatusByOrderId" parameterType="java.lang.Integer" >
+    update t_order set order_status = 1 
+	where merge_count = succ_count and merge_count>=0 and succ_count>=0
+	and id = #{orderId,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateMergeCountByOrderId" parameterType="java.lang.Integer" >
+    update t_order 
+    set merge_count = merge_count-1
+    where id = #{orderId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectPaySuccessExcelByQuery" resultMap="BaseResultMapVO">
+        select a.order_id orderId,a.customer_id,sum(amount) agent_commission_fin,count(a.id) total_count
+		,b.check_status,b.checkoper,b.checktime,b.createoper,b.createtime
+		,b.order_status,b.remark,c.customer_name
+		from t_transaction_flow a
+		left join t_order b on a.order_id = b.id
+		left join t_customer_info c on a.customer_id = c.id
+		where b.data_status = 1 and a.pay_status = 2 
+		<if test="q.orderId !=null and q.orderId!='' ">
+            and b.id=#{q.orderId,jdbcType=INTEGER}
+        </if>
+        <if test="q.customerId !=null and q.customerId!='' ">
+            and b.customer_id=#{q.customerId,jdbcType=VARCHAR}
+        </if>
+        <if test="q.createtime !=null and q.createtime!='' ">
+            and DATE_FORMAT(b.createtime,'%Y-%m-%d') between #{q.startTime,jdbcType=TIMESTAMP} and
+            #{q.endTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="q.checkStatus !=null and q.checkStatus!='' ">
+            and b.check_status=#{q.checkStatus,jdbcType=INTEGER}
+        </if>
+		group by a.order_id
+        order by b.createtime desc
+    </select>
+  
+</mapper>

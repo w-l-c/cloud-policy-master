@@ -1,0 +1,72 @@
+logging:
+  path: /Users/si/Desktop/logs
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 100MB
+  resources:
+      staticLocations: classpath:/static/, classpath:/assets/   #ResourceProperties.java
+  mvc:  #WebMvcProperties
+      dateFormat: yyyy-MM-dd
+  jackson:
+    dateFormat: yyyy-MM-dd
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    modal:  HTML5
+    encoding: UTF-8
+  datasource:
+    url : jdbc:mysql://rm-uf69q73eoafz9iu54zo.mysql.rds.aliyuncs.com:3306/yunbao_tj_test?useUnicode=true&characterEncoding=UTF-8&&useSSL=false&serverTimezone=GMT%2B8
+    username : yunbao001
+    password : syyb@2019&3759
+    driverClassName : com.mysql.cj.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 15
+      maximum-pool-size: 100
+      auto-commit: true
+      idle-timeout: 30000
+      pool-name: DatebookHikariCP
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+  cache:
+    jcache:
+      config: classpath:ehcache.xml
+
+server:
+    port: 9000
+    contextPath: /
+    servlet:
+      session:
+        timeout: 36000
+        cookie:
+          name: CLSYSSESSIONID
+          max-age: 360000
+    tomcat:
+      basedir:
+      protocol-header: x-forwarded-proto
+      remote-ip-header: x-forwarded-for
+      background-processor-delay: 30
+      accesslog:
+        enabled: false
+        accessLogEnabled: false
+
+
+mybatis:
+    mapper-locations: classpath*:cn/**/mapper/*.xml
+
+sys:
+  authc:
+    - /**
+  anon:
+    - /sys/vcode
+    - /eval/*
+    - /dealerWx/*
+file:
+  upload:
+    key: default
+    local: /aliyunNAS/if
+    url: /aliyunNAS/if
+    domain: https://testfile.rebornauto.cn 

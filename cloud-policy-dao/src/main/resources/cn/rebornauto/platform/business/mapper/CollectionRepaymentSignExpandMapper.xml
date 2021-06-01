@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.CollectionRepaymentSignMapper">
+	<resultMap id="BaseResultMapVO" type="cn.rebornauto.platform.business.entity.CollectionRepaymentSignVO">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <id column="request_sn" jdbcType="VARCHAR" property="requestSn" />
+    <result column="transaction_flow_id" jdbcType="VARCHAR" property="transactionFlowId" />
+    <result column="trade_code" jdbcType="VARCHAR" property="tradeCode" />
+    <result column="bank_code" jdbcType="VARCHAR" property="bankCode" />
+    <result column="agent_name" jdbcType="VARCHAR" property="agentName" />
+    <result column="idcardno" jdbcType="VARCHAR" property="idcardno" />
+    <result column="open_bank_no" jdbcType="VARCHAR" property="openBankNo" />
+    <result column="amount" jdbcType="DECIMAL" property="amount" />
+    <result column="complete_time" jdbcType="TIMESTAMP" property="completeTime" />
+    <result column="post_time" jdbcType="TIMESTAMP" property="postTime" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="status1" jdbcType="VARCHAR" property="status1" />
+    <result column="status2" jdbcType="VARCHAR" property="status2" />
+    <result column="createoper" jdbcType="VARCHAR" property="createoper" />
+    <result column="customer_id" jdbcType="VARCHAR" property="customerId" />
+    <result column="order_id" jdbcType="INTEGER" property="orderId" />
+    <result column="ft_type_id" jdbcType="INTEGER" property="ftTypeId" />
+    <result column="policy_no" jdbcType="VARCHAR" property="policyNo" />
+    <result column="policy_amount" jdbcType="DECIMAL" property="policyAmount" />
+    <result column="outtime" jdbcType="TIMESTAMP" property="outtime" />
+    <result column="policyAmountFin" jdbcType="VARCHAR" property="policyAmountFin" />
+    <result column="amountFin" jdbcType="VARCHAR" property="amountFin" />
+  </resultMap>
+  <select id="selectListByRequestSn" parameterType="java.lang.String" resultMap="BaseResultMapVO">
+    select t2.*,t1.customer_id,t1.order_id,t1.ft_type_id 
+    from t_transaction_flow t1
+	left join t_collection_repayment_sign t2 on t1.transaction_flow_id = t2.transaction_flow_id
+	where t2.request_sn = #{requestSn,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByQuery" resultMap="BaseResultMapVO">
+        select a.policy_no,a.policy_amount,a.outtime,b.*
+        ,Format(a.policy_amount, 2) policyAmountFin
+        ,Format(b.amount, 2) amountFin
+		from t_collection_repayment_sign b
+		left join t_transaction_flow a on b.transaction_flow_id =a.transaction_flow_id
+		where a.transaction_flow_id = #{q.transactionFlowId,jdbcType=VARCHAR}
+        order by a.id desc
+        limit #{p.offset,jdbcType=INTEGER},#{p.pageSize,jdbcType=INTEGER}
+    </select>
+
+    <select id="countByQuery" resultType="java.lang.Long">
+        select count(*)
+		from t_collection_repayment_sign b
+		left join t_transaction_flow a on b.transaction_flow_id =a.transaction_flow_id
+		where a.transaction_flow_id = #{q.transactionFlowId,jdbcType=VARCHAR}
+    </select>
+    
+    <select id="selectInProcessedFromSandPay" resultMap="BaseResultMapVO">
+	    select * 
+		from t_collection_repayment_sign 
+		where transaction_flow_id in (
+		    select transaction_flow_id 
+		    from t_transaction_flow 
+		    where 1=1
+		    and pay_status =4
+		    and payment_channel_id = 2 )
+		and status = 4
+		and now()<![CDATA[ <]]>date_add(post_time,interval 30 minute)
+  	</select>
+    
+</mapper>

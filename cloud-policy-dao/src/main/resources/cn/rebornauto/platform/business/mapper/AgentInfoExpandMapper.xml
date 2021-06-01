@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.AgentInfoMapper">
+
+	<sql id="queryWhereSql">
+	     <if test="q.customerId !=null and q.customerId!='' ">
+			and a.customer_id=#{q.customerId,jdbcType=VARCHAR}
+		</if>
+		<if test="q.agentName !=null and q.agentName!='' ">
+			and b.agent_name LIKE
+			CONCAT(CONCAT('%',#{q.agentName,jdbcType=VARCHAR}),'%')
+		</if>
+		<if test="q.agentIdcardno !=null and q.agentIdcardno!='' ">
+			and b.agent_idcardno=#{q.agentIdcardno,jdbcType=VARCHAR}
+		</if>
+		<if test="q.createtime !=null and q.createtime!='' ">
+			and DATE_FORMAT(a.createtime,'%Y-%m-%d') between
+			#{q.startTime,jdbcType=TIMESTAMP} and #{q.endTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="q.authStatus !=null and q.authStatus!='' ">
+			and a.auth_status=#{q.authStatus,jdbcType=VARCHAR}
+		</if>
+		<if test="q.signStatus !=null and q.signStatus!='' ">
+			and a.sign_status=#{q.signStatus,jdbcType=VARCHAR}
+		</if>
+		<if test="q.dataStatus !=null and q.dataStatus!='' ">
+			and a.data_status=#{q.dataStatus,jdbcType=VARCHAR}
+		</if>
+	</sql>
+
+   
+    <sql id="pageSql">
+       limit #{p.offset,jdbcType=INTEGER},#{p.pageSize,jdbcType=INTEGER}
+    </sql>
+     
+    <resultMap id="GzhAgentInfoVoMap" type="cn.rebornauto.platform.business.vo.GzhAgentInfoVo">
+     <id column="id" jdbcType="INTEGER" property="id" />
+     <result column="openid" jdbcType="VARCHAR" property="openid" />  
+     <result column="nationality_id" jdbcType="INTEGER" property="nationalityId" />
+     <result column="id_type" jdbcType="INTEGER" property="idType" />   
+     <result column="agent_name" jdbcType="VARCHAR" property="agentName" />
+     <result column="agent_idcardno" jdbcType="VARCHAR" property="agentIdcardno" />
+<!-- <result column="agent_bankcard_img_pic_url" jdbcType="VARCHAR" property="agentBankcardImgPicUrl" /> -->     
+     <result column="agent_open_bank_no" jdbcType="VARCHAR" property="agentOpenBankNo" /> 
+     <result column="agent_open_bank_name" jdbcType="VARCHAR" property="agentOpenBankName" />     
+     <result column="agent_open_bank_code" jdbcType="VARCHAR" property="agentOpenBankCode" />       
+     <result column="agent_mobile" jdbcType="VARCHAR" property="agentMobile" />      
+     <result column="front_idcard_pic_url" jdbcType="VARCHAR" property="frontIdcardPicUrl" />
+     <result column="back_idcard_pic_url" jdbcType="VARCHAR" property="backIdcardPicUrl" />
+     <result column="agent_qr_code_pic_url" jdbcType="VARCHAR" property="agentQrCodePicUrl" />
+     <result column="agent_qr_code_img_post_url" jdbcType="VARCHAR" property="agentQrCodeImgPostUrl" />   
+     <result column="customer_id" jdbcType="VARCHAR" property="customerId" />   
+     <result column="agent_province" jdbcType="VARCHAR" property="agentProvince" />
+     <result column="agent_city" jdbcType="VARCHAR" property="agentCity" />
+     <result column="agent_address" jdbcType="VARCHAR" property="agentAddress" />
+  </resultMap>
+
+	<select id="selectAgentInfoByOpenid" resultMap="GzhAgentInfoVoMap">
+		 select
+		 a.id,a.openid,a.nationality_id,a.id_type,a.agent_name,a.agent_idcardno,a.agent_mobile
+		,b.agent_open_bank_no,b.agent_open_bank_name,b.agent_open_bank_code
+        ,b.agent_open_bank_mobile agent_mobile,a.front_idcard_pic_url,a.back_idcard_pic_url
+		,a.agent_qr_code_pic_url,a.agent_qr_code_img_post_url,c.customer_id
+		from t_agent_info a
+		left join t_agent_bank_no_info b on a.id=b.agent_id
+	    left join t_agent_customer  c on c.agent_id=a.id
+		where 1=1 and a.openid=#{openid}
+		group by a.id
+	</select>
+	<select id="selectAgentInfoByOpenidNew" resultMap="GzhAgentInfoVoMap">
+		 select
+		 a.id,a.openid,a.nationality_id,a.id_type,a.agent_name,a.agent_idcardno,a.agent_mobile,a.agent_province,a.agent_city,a.agent_address
+		,b.agent_open_bank_no,b.agent_open_bank_name,b.agent_open_bank_code
+        ,b.agent_open_bank_mobile agent_mobile,a.front_idcard_pic_url,a.back_idcard_pic_url
+		,a.agent_qr_code_pic_url,a.agent_qr_code_img_post_url,c.customer_id
+		from t_agent_info a
+		left join t_agent_bank_no_info b on a.id=b.agent_id
+	    left join t_agent_customer  c on c.agent_id=a.id
+		where 1=1 and a.openid=#{openid}
+		group by a.id
+	</select>
+
+
+   <resultMap id="GzhAgentCustomerVoMap" type="cn.rebornauto.platform.business.vo.GzhAgentCustomerVo">
+           <result column="id" jdbcType="INTEGER" property="id" />
+          <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+          <result column="customer_address" jdbcType="VARCHAR" property="customerAddress" />
+          <result column="customer_link_man" jdbcType="VARCHAR" property="customerLinkMan" />
+          <result column="customer_mobile" jdbcType="VARCHAR" property="customerMobile" />
+          <result column="customer_link_email" jdbcType="VARCHAR" property="customerLinkEmail" />
+           <result column="createtime" jdbcType="VARCHAR" property="createtime" />     
+          <result column="dai_zheng_name" jdbcType="VARCHAR" property="daiZhengName" />
+          <result column="dai_zheng_address" jdbcType="VARCHAR" property="daiZhengAddress" />
+          <result column="dai_zheng_link_man" jdbcType="VARCHAR" property="daiZhengLinkMan" />
+          <result column="dai_zheng_link_mobile" jdbcType="VARCHAR" property="daiZhengLinkMobile" />
+          <result column="dai_zheng_link_email" jdbcType="VARCHAR" property="daiZhengLinkEmail" />
+          <result column="agent_name" jdbcType="VARCHAR" property="agentName" />
+          <result column="agent_address" jdbcType="VARCHAR" property="agentAddress" />
+          <result column="agent_idcardno" jdbcType="VARCHAR" property="agentIdcardno" />
+          <result column="agent_mobile" jdbcType="VARCHAR" property="agentMobile" />
+          <result column="agent_email" jdbcType="VARCHAR" property="agentEmail" />
+          <result column="sign_status" jdbcType="INTEGER" property="signStatus" />
+          <result column="contract_number" jdbcType="INTEGER" property="contractNumber" />     
+           <result column="sign_time" jdbcType="INTEGER" property="signTime" />      
+           <result column="gxjjhzhbxy" jdbcType="VARCHAR" property="gxjjhzhbxy" />              
+           <result column="url" jdbcType="VARCHAR" property="url" />
+           <result column="type" jdbcType="INTEGER" property="type" />
+   </resultMap>
+
+   <select id="selectAgentCustomerListByAgentId" resultMap="GzhAgentCustomerVoMap">
+	  select
+	  a.id,c.customer_name,c.customer_address,c.customer_link_man,c.customer_mobile,c.customer_link_email,DATE_FORMAT(c.createtime,'%Y/%m/%d') createtime,
+	  d.dai_zheng_name,d.dai_zheng_address,d.dai_zheng_link_man,d.dai_zheng_link_mobile,d.dai_zheng_link_email,
+	  b.agent_name,b.agent_address,b.agent_idcardno,b.agent_mobile,b.agent_email,a.sign_status,a.contract_number,
+	  DATE_FORMAT(a.sign_time,'%Y年%m月%d日') sign_time,e.gxjjhzhbxy
+	  from t_agent_customer a
+	  LEFT JOIN t_agent_info b on b.id=a.agent_id
+	  LEFT JOIN t_customer_info c on c.id=a.customer_id
+  	  LEFT JOIN t_dai_zheng_info d on d.id=c.dai_zheng_id
+  	  LEFT join t_contract_pdf e on e.agent_id=a.agent_id  and e.data_status=1	 	  
+	  where 1=1 and a.agent_id=#{agentId}
+	  GROUP BY b.id,d.id
+    </select>
+
+  <select id="selectAgentCustomerInfoById" resultMap="GzhAgentCustomerVoMap">
+	  select
+	  a.id,c.customer_name,c.customer_address,c.customer_link_man,c.customer_mobile,c.customer_link_email,DATE_FORMAT(c.createtime,'%Y/%m/%d') createtime,
+	  d.dai_zheng_name,d.dai_zheng_address,d.dai_zheng_link_man,d.dai_zheng_link_mobile,d.dai_zheng_link_email,
+	  b.agent_name,b.agent_address,b.agent_idcardno,b.agent_mobile,b.agent_email,a.sign_status,a.contract_number,
+	  DATE_FORMAT(a.sign_time,'%Y年%m月%d日') sign_time,e.gxjjhzhbxy
+	  from t_agent_customer a
+	  LEFT JOIN t_agent_info b on b.id=a.agent_id
+	  LEFT JOIN t_customer_info c on c.id=a.customer_id
+  	  LEFT JOIN t_dai_zheng_info d on d.id=c.dai_zheng_id
+  	  LEFT join t_contract_pdf e on e.agent_id=a.agent_id  and e.data_status=1	 	  
+	  where 1=1 and a.id=#{id}
+    </select>
+
+    <resultMap id="AgentVoMap" type="cn.rebornauto.platform.business.vo.AgentVo">
+     <id column="id" jdbcType="INTEGER" property="id" />
+     <result column="agent_id" jdbcType="INTEGER" property="agentId" />   
+     <result column="customer_id" jdbcType="VARCHAR" property="customerId" />   
+     <result column="agent_name" jdbcType="VARCHAR" property="agentName" />
+     <result column="agent_idcardno" jdbcType="VARCHAR" property="agentIdcardno" />
+     <result column="front_idcard_pic_url" jdbcType="VARCHAR" property="frontIdcardPicUrl" /> 
+     <result column="back_idcard_pic_url" jdbcType="VARCHAR" property="backIdcardPicUrl" />     
+     <result column="gxjjhzhbxy" jdbcType="VARCHAR" property="contractUrl" />
+     <result column="agent_mobile" jdbcType="VARCHAR" property="agentMobile" />
+     <result column="createtime" jdbcType="VARCHAR" property="createtime" />      
+     <result column="auth_status" jdbcType="INTEGER" property="authStatus" />
+     <result column="sign_status" jdbcType="INTEGER" property="signStatus" />
+     <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+     <result column="customer_name" jdbcType="VARCHAR" property="customerName" />   
+     <result column="xmsmqswjwtsUrl" jdbcType="VARCHAR" property="xmsmqswjwtsUrl" />
+     <result column="gxjjhzhbxyUrl" jdbcType="VARCHAR" property="gxjjhzhbxyUrl" />
+  </resultMap>
+
+  <select id="countByQuery" resultType="int">
+		select
+	    count(*)
+	   	from  t_agent_customer a
+		left join t_agent_info b on b.id=a.agent_id
+		left join t_customer_info c on c.id=a.customer_id
+		where 1=1 and (a.sign_status=2 or a.sign_status=5)
+		<if test="q!=null">
+			<include refid="queryWhereSql" />
+		</if>
+	</select> 
+
+	<select id="pageQuery" resultMap="AgentVoMap">
+		select a.id,b.id agent_id,c.id
+		customer_id,b.agent_name,b.agent_idcardno,b.front_idcard_pic_url,d.gxjjhzhbxy,
+		b.back_idcard_pic_url,b.agent_mobile,DATE_FORMAT(a.createtime,'%Y-%m-%d') createtime,a.auth_status,a.sign_status,a.data_status
+		,c.customer_name,
+		f.gxjjhzhbxyUrl,
+		f.xmsmqswjwtsUrl
+		from  t_agent_customer a
+		left join t_agent_info b on b.id=a.agent_id
+		left join t_customer_info c on c.id=a.customer_id
+		left join t_contract_pdf d on d.agent_id=a.agent_id
+		LEFT JOIN (select e.agent_id,max(CASE WHEN e.type=1 THEN e.url ELSE '' END) gxjjhzhbxyUrl,
+		max(CASE WHEN e.type=2 THEN e.url ELSE '' END) xmsmqswjwtsUrl from t_contract_pdf_extra e group by e.agent_id) f
+		on f.agent_id = a.agent_id
+		where 1=1 and (a.sign_status=2 or a.sign_status=5)
+		<if test="q!=null">
+			<include refid="queryWhereSql" />
+		 </if>
+		    order by a.agent_id desc
+		<if test="p!=null">
+			<include refid="pageSql" />
+		</if>
+	</select>
+	<select id="selectAgentIdcardnoByOpenBankNo" resultType="String">
+		SELECT a.agent_idcardno
+		from t_agent_info a LEFT JOIN t_agent_bank_no_info b ON a.id = b.agent_id
+		where b.agent_open_bank_no = #{openBankNo,jdbcType=VARCHAR}
+	</select>
+	
+	
+	
+	    <resultMap id="SignInfoVoMap" type="cn.rebornauto.platform.business.vo.SignInfoVo">
+	       <result column="id" jdbcType="INTEGER" property="id" />    
+	       <result column="agent_id" jdbcType="INTEGER" property="agentId" />      
+	       	<result column="sign_status" jdbcType="INTEGER" property="signStatus" />      	     
+           <result column="agent_name" jdbcType="VARCHAR" property="agentName" />
+          <result column="agent_province" jdbcType="VARCHAR" property="agentProvince" />
+          <result column="agent_city" jdbcType="VARCHAR" property="agentCity" />
+          <result column="agent_address" jdbcType="VARCHAR" property="agentAddress" />
+          <result column="agent_idcardno" jdbcType="VARCHAR" property="agentIdcardno" />
+          <result column="agent_mobile" jdbcType="VARCHAR" property="agentMobile" />
+          <result column="agent_email" jdbcType="VARCHAR" property="agentEmail" />
+          <result column="agent_account" jdbcType="VARCHAR" property="agentAccount" />
+           <result column="dai_zheng_id" jdbcType="INTEGER" property="daiZhengId" />
+          <result column="dai_zheng_name" jdbcType="VARCHAR" property="daiZhengName" />
+          <result column="dai_zheng_address" jdbcType="VARCHAR" property="daiZhengAddress" />
+          <result column="dai_zheng_link_man" jdbcType="VARCHAR" property="daiZhengLinkMan" />
+          <result column="dai_zheng_link_mobile" jdbcType="VARCHAR" property="daiZhengLinkMobile" />
+          <result column="dai_zheng_link_email" jdbcType="VARCHAR" property="daiZhengLinkEmail" /> 
+           <result column="dai_zheng_account" jdbcType="VARCHAR" property="daiZhengAccount" />     
+          <result column="image_name" jdbcType="VARCHAR" property="imageName" />
+  </resultMap>
+		
+	<select id="getSignInfo" resultMap="SignInfoVoMap">
+	select
+	a.id,a.agent_id,e.status sign_status,b.agent_name,b.agent_address,b.agent_idcardno,b.agent_mobile,b.agent_email,b.account agent_account,
+	d.id dai_zheng_id,d.dai_zheng_name,d.dai_zheng_address,d.dai_zheng_link_man,d.dai_zheng_link_mobile,d.dai_zheng_link_email,
+	d.account dai_zheng_account,d.image_name,f.name agent_province,g.name agent_city
+	from t_agent_customer a
+	LEFT JOIN t_agent_info b on b.id=a.agent_id
+	LEFT JOIN tb_area f on b.agent_province = f.adcode
+	LEFT JOIN tb_area g on b.agent_city = g.adcode
+	LEFT JOIN t_customer_info c on c.id=a.customer_id
+	LEFT JOIN t_dai_zheng_info d on d.id=c.dai_zheng_id
+	LEFT JOIN t_contract_pdf_extra e on e.agent_id = a.agent_id
+	where 1=1 and a.id=#{id} and e.type = #{type}
+</select>  
+
+
+   <resultMap id="SignStatusInfoVoMap" type="cn.rebornauto.platform.business.vo.SignStatusInfoVo">
+	      <result column="sign_status" jdbcType="INTEGER" property="signStatus" />  
+           <result column="sign_time" jdbcType="TIMESTAMP" property="signTime" />
+	       <result column="contract_number" jdbcType="VARCHAR" property="contractNumber" />  
+     </resultMap>  
+
+   <select id="selectSignStatus" resultMap="SignStatusInfoVoMap">
+      select  a.sign_status,a.sign_time,a.contract_number
+	  from t_agent_customer a
+	  LEFT JOIN t_agent_info b on b.id=a.agent_id
+	  LEFT JOIN t_customer_info c on c.id=a.customer_id
+     LEFT JOIN t_dai_zheng_info d on d.id=c.dai_zheng_id
+     where  b.id=#{agentId} and d.id=#{daiZhengId}
+     GROUP BY b.id,d.id
+   </select> 
+             
+             
+             
+     <resultMap id="AuthInfoVoMap" type="cn.rebornauto.platform.business.vo.AuthInfoVo">
+	      <result column="agent_customer_id" jdbcType="INTEGER" property="agentCustomerId" />    
+	      <result column="is_auth" jdbcType="INTEGER" property="isAuth" />      
+     </resultMap>          
+            
+     <select id="selectAgentCustomerIds" resultMap="AuthInfoVoMap">
+      select  a.id agent_customer_id,c.is_auth
+	  from t_agent_customer a
+	  LEFT JOIN t_agent_info b on b.id=a.agent_id
+	  LEFT JOIN t_customer_info c on c.id=a.customer_id
+      LEFT JOIN t_dai_zheng_info d on d.id=c.dai_zheng_id
+      where (a.sign_status=1 or a.sign_status=3 or a.sign_status=5) and b.id=#{agentId} and d.id=#{daiZhengId}
+   </select>        
+
+	<select id="selectAgentCustomerListByAgentIdNew" resultMap="GzhAgentCustomerVoMap">
+		select
+	  a.id,c.customer_name,c.customer_address,c.customer_link_man,c.customer_mobile,c.customer_link_email,DATE_FORMAT(c.createtime,'%Y/%m/%d') createtime,
+	  d.dai_zheng_name,d.dai_zheng_address,d.dai_zheng_link_man,d.dai_zheng_link_mobile,d.dai_zheng_link_email,
+	  b.agent_name,b.agent_address,b.agent_idcardno,b.agent_mobile,b.agent_email,e.status sign_status,a.contract_number,
+	  DATE_FORMAT(a.sign_time,'%Y年%m月%d日') sign_time,e.url,e.type
+	  from t_agent_customer a
+	  LEFT JOIN t_agent_info b on b.id=a.agent_id
+	  LEFT JOIN t_customer_info c on c.id=a.customer_id
+  	  LEFT JOIN t_dai_zheng_info d on d.id=c.dai_zheng_id
+  	  LEFT join t_contract_pdf_extra e on e.agent_id=a.agent_id  and e.data_status=1
+	  where 1=1 and a.agent_id=#{agentId} and a.customer_id = #{customerId}
+	</select>
+</mapper>

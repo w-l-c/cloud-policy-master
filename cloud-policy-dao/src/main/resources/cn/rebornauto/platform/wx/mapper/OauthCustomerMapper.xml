@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.wx.dao.OauthCustomerMapper">
+  <resultMap id="BaseResultMap" type="cn.rebornauto.platform.wx.entity.OauthCustomer">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="appid" jdbcType="VARCHAR" property="appid" />
+    <result column="unionid" jdbcType="VARCHAR" property="unionid" />
+    <result column="openid" jdbcType="VARCHAR" property="openid" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
+    <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
+    <result column="subscribe" jdbcType="TINYINT" property="subscribe" />
+    <result column="subscribe_time" jdbcType="TIMESTAMP" property="subscribeTime" />
+    <result column="binding" jdbcType="TINYINT" property="binding" />
+    <result column="binding_time" jdbcType="TIMESTAMP" property="bindingTime" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from wx_oauth_customer
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cn.rebornauto.platform.wx.entity.OauthCustomer">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into wx_oauth_customer (appid, unionid, openid, 
+      phone, nickname, customer_name, 
+      created_time, updated_time,
+      subscribe_time,  binding_time
+      )
+    values (#{appid,jdbcType=VARCHAR}, #{unionid,jdbcType=VARCHAR}, #{openid,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, #{customerName,jdbcType=VARCHAR}, 
+      #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP},
+      #{subscribeTime,jdbcType=TIMESTAMP}, #{bindingTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="cn.rebornauto.platform.wx.entity.OauthCustomer">
+    update wx_oauth_customer
+    set appid = #{appid,jdbcType=VARCHAR},
+      unionid = #{unionid,jdbcType=VARCHAR},
+      openid = #{openid,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      nickname = #{nickname,jdbcType=VARCHAR},
+      customer_name = #{customerName,jdbcType=VARCHAR},
+      created_time = #{createdTime,jdbcType=TIMESTAMP},
+      updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+      subscribe = #{subscribe,jdbcType=TINYINT},
+      subscribe_time = #{subscribeTime,jdbcType=TIMESTAMP},
+      binding = #{binding,jdbcType=TINYINT},
+      binding_time = #{bindingTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, appid, unionid, openid, phone, nickname, customer_name, created_time, 
+    updated_time, subscribe, subscribe_time, binding, binding_time
+    from wx_oauth_customer
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, appid, unionid, openid, phone, nickname, customer_name, created_time, 
+    updated_time, subscribe, subscribe_time, binding, binding_time
+    from wx_oauth_customer
+  </select>
+  <select id="countByPhoneAndOpenid" resultType="java.lang.Integer">
+   select count(id) from wx_oauth_customer
+   where phone=#{phone,jdbcType=VARCHAR}
+    and openid= #{openid,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectOpenIdsByPhone" resultType="java.lang.String">
+   select openid from wx_oauth_customer
+   where phone=#{phone,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectPhoneByOpenId" resultType="java.lang.String">
+   select phone from wx_oauth_customer
+   where openid=#{openid,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByOpenId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select id, appid, unionid, openid, phone, nickname, customer_name, created_time,
+    updated_time, subscribe, subscribe_time, binding, binding_time
+    from wx_oauth_customer
+    where openid = #{openid,jdbcType=VARCHAR} limit 1
+  </select>
+  <update id="updateBindingFieldByOpenId" parameterType="cn.rebornauto.platform.wx.entity.OauthCustomer">
+    update wx_oauth_customer
+    set
+      binding = #{binding,jdbcType=TINYINT},
+      binding_time = #{bindingTime,jdbcType=TIMESTAMP}
+    where openid = #{openid,jdbcType=VARCHAR}
+  </update>
+  <select id="selectNextOpenid" resultType="String">
+    select openid
+    from wx_oauth_customer
+    where appid = #{appid,jdbcType=VARCHAR}
+    ORDER BY id DESC
+    limit 0,1
+  </select>
+
+  <select id="countByUnionIdAndAppId" resultType="java.lang.Integer">
+    select count(id) from wx_oauth_customer
+    where unionid=#{unionid,jdbcType=VARCHAR}
+    and appid= #{appid,jdbcType=VARCHAR}
+  </select>
+</mapper>

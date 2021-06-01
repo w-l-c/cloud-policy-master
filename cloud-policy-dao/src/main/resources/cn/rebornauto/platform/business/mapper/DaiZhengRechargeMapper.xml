@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.DaiZhengRechargeMapper">
+  <resultMap id="BaseResultMap" type="cn.rebornauto.platform.business.entity.DaiZhengRecharge">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="applytime" jdbcType="TIMESTAMP" property="applytime" />
+    <result column="customer_id" jdbcType="VARCHAR" property="customerId" />
+    <result column="agent_commission" jdbcType="DECIMAL" property="agentCommission" />
+    <result column="real_payment" jdbcType="DECIMAL" property="realPayment" />
+    <result column="recharge" jdbcType="INTEGER" property="recharge" />
+    <result column="recharge_voucher_pic_url" jdbcType="VARCHAR" property="rechargeVoucherPicUrl" />
+    <result column="arrivetime" jdbcType="TIMESTAMP" property="arrivetime" />
+    <result column="dai_zheng_id" jdbcType="INTEGER" property="daiZhengId" />
+    <result column="customer_service_rate" jdbcType="DECIMAL" property="customerServiceRate" />
+    <result column="service_amount" jdbcType="DECIMAL" property="serviceAmount" />
+    <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="createoper" jdbcType="VARCHAR" property="createoper" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="modifyoper" jdbcType="VARCHAR" property="modifyoper" />
+    <result column="modifytime" jdbcType="TIMESTAMP" property="modifytime" />
+    <result column="checkoper" jdbcType="VARCHAR" property="checkoper" />
+    <result column="checktime" jdbcType="TIMESTAMP" property="checktime" />
+  </resultMap>
+
+</mapper>

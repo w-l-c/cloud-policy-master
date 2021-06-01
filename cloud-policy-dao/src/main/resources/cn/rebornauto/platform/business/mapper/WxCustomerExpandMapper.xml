@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.WxCustomerMapper">
+  <resultMap id="WxCustomerVoMap" type="cn.rebornauto.platform.business.vo.WxCustomerVo">
+    <result column="openid" jdbcType="VARCHAR" property="openid" />
+    <result column="customer_id" jdbcType="VARCHAR" property="customerId" />
+  </resultMap>
+  
+  	<sql id="queryWhereSql">
+	     <if test="q.openid !=null and q.openid!='' ">
+			and a.openid=#{q.openid,jdbcType=VARCHAR}
+		</if>
+	</sql>
+	
+	<select id="selectByQuery" resultMap="WxCustomerVoMap">
+	    select a.openid,a.customer_id
+		from  tb_wx_customer a
+		where 1=1
+        <if test="q!=null">
+			<include refid="queryWhereSql" />
+		 </if>
+         ORDER BY a.createtime desc
+		  limit 0,1	
+	</select>
+</mapper>

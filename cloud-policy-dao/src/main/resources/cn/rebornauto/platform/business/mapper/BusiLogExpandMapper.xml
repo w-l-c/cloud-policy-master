@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.BusiLogMapper">
+    <resultMap id="BaseResultVOMap" type="cn.rebornauto.platform.business.vo.BusiLogVo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="customer_id" jdbcType="VARCHAR" property="customerId" />
+        <result column="ip" jdbcType="VARCHAR" property="ip" />
+        <result column="option_content" jdbcType="VARCHAR" property="optionContent" />
+        <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="createoper" jdbcType="VARCHAR" property="createoper" />
+        <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+        <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+    </resultMap>
+    <sql id="query">
+        <if test="q.customerId != null and q.customerId != ''">
+            and a.customer_id like concat(concat('%',#{q.customerId,jdbcType=VARCHAR}),'%')
+        </if>
+        <if test="q.customerName != null and q.customerName != ''">
+            and b.customer_name like concat(concat('%',#{q.customerName,jdbcType=VARCHAR}),'%')
+        </if>
+        <if test="q.createtime !=null and q.createtime!='' ">
+            and DATE_FORMAT(a.createtime,'%Y-%m-%d') between #{q.startTime,jdbcType=TIMESTAMP} and
+            #{q.endTime,jdbcType=TIMESTAMP}
+        </if>
+    </sql>
+    <sql id="pageQuery">
+        <if test="p.offset != null and p.pageSize != null">
+            limit #{p.offset,jdbcType=INTEGER},#{p.pageSize,jdbcType=INTEGER}
+        </if>
+
+    </sql>
+    <select id="count" resultType="Integer">
+        select count(1) from t_busi_log a LEFT JOIN t_customer_info b on a.customer_id = b.id
+        where a.data_status = 1
+        <include refid="query"></include>
+    </select>
+    <select id="list" resultMap="BaseResultVOMap">
+        SELECT a.id,a.customer_id,a.ip,a.option_content,a.data_status,a.remark,a.createoper,
+        a.createtime,b.customer_name
+        from t_busi_log a LEFT JOIN t_customer_info b on a.customer_id = b.id
+        where a.data_status = 1
+        <include refid="query"></include>
+        order by a.createtime DESC
+        <include refid="pageQuery"></include>
+    </select>
+    <select id="selectBusiLogExcelByQuery" resultMap="BaseResultVOMap">
+        SELECT a.id,a.customer_id,a.ip,a.option_content,a.data_status,a.remark,a.createoper,
+        a.createtime,b.customer_name
+        from t_busi_log a LEFT JOIN t_customer_info b on a.customer_id = b.id
+        where a.data_status = 1
+        <include refid="query"></include>
+        order by a.createtime DESC
+    </select>
+</mapper>

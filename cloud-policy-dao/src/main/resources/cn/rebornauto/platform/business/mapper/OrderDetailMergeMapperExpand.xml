@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.OrderDetailMergeMapper">
+  <resultMap id="BaseResultMapVO" type="cn.rebornauto.platform.business.vo.OrderDetailMergeVO">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="merge_id" jdbcType="VARCHAR" property="mergeId" />
+    <result column="order_id" jdbcType="INTEGER" property="orderId" />
+    <result column="dai_zheng_id" jdbcType="INTEGER" property="daiZhengId" />
+    <result column="payment_channel_id" jdbcType="INTEGER" property="paymentChannelId" />
+    <result column="policy_amount" jdbcType="DECIMAL" property="policyAmount" />
+    <result column="amount" jdbcType="DECIMAL" property="amount" />
+    <result column="agent_id" jdbcType="INTEGER" property="agentId" />
+    <result column="agent_name" jdbcType="VARCHAR" property="agentName" />
+    <result column="idcardno" jdbcType="VARCHAR" property="idcardno" />
+    <result column="open_bank_no" jdbcType="VARCHAR" property="openBankNo" />
+    <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="createoper" jdbcType="VARCHAR" property="createoper" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="modifyoper" jdbcType="VARCHAR" property="modifyoper" />
+    <result column="modifytime" jdbcType="TIMESTAMP" property="modifytime" />
+    <result column="customer_id" jdbcType="VARCHAR" property="customerId" />
+    <result column="totalAmountQuery" jdbcType="DECIMAL" property="totalAmountQuery" />
+    <result column="totalCountQuery" jdbcType="INTEGER" property="totalCountQuery" />
+    <result column="check_status" jdbcType="INTEGER" property="checkStatus" />
+  </resultMap>
+  
+  
+  <select id="selectByDetailQuery" resultMap="BaseResultMapVO">
+        select b.totalAmountQuery,c.totalCountQuery,a.*,d.check_status
+		from t_order_detail a 
+		left join (select order_id,sum(amount) totalAmountQuery 
+            		from t_order_detail 
+            		where data_status = 1 and order_id = #{q.orderId,jdbcType=INTEGER} ) b on b.order_id=a.order_id
+		left join (select order_id,count(*) totalCountQuery 
+            from t_order_detail 
+            where data_status = 1 and order_id = #{q.orderId,jdbcType=INTEGER} ) c on c.order_id=a.order_id
+        left join t_order d on a.order_id = d.id
+		where a.data_status = 1 and a.order_id = #{q.orderId,jdbcType=INTEGER}
+        order by a.id desc
+        limit #{p.offset,jdbcType=INTEGER},#{p.pageSize,jdbcType=INTEGER}
+
+    </select>
+
+    <select id="countByDetailQuery" resultType="java.lang.Long">
+        select count(*)
+		from t_order_detail a 
+		where a.data_status = 1 and a.order_id = #{q.orderId,jdbcType=INTEGER}
+    </select>
+</mapper>

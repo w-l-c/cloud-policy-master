@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.SysDicMapper">
+   <resultMap id="SysDicOptionVOMap" type="cn.rebornauto.platform.common.data.view.SysDicOptionVO">
+      <result column="id" jdbcType="INTEGER" property="key" />
+      <result column="label" jdbcType="VARCHAR" property="value" />
+      <result column="enabled" jdbcType="TINYINT" property="disabled" /> 
+  </resultMap>
+  
+  <select id="selectSysDics" resultMap="SysDicOptionVOMap">
+      select  a.id,a.label,a.enabled
+      from tb_sys_dic a
+      where a.is_deleted=0 and a.group=#{group}
+  </select>
+  
+   <select id="selectOneSysDic" resultMap="SysDicOptionVOMap">
+      select  a.id,a.label,a.enabled
+      from tb_sys_dic a
+      where a.is_deleted=0 and a.group=#{group}
+      limit 0,1
+  </select>
+</mapper>

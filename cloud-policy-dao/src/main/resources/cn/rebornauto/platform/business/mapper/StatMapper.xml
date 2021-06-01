@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.StatMapper">
+  <resultMap id="BaseResultMap" type="cn.rebornauto.platform.business.vo.Stat">
+    <result column="dayOrMonth" jdbcType="VARCHAR" property="dayOrMonth" />
+    <result column="amount" jdbcType="DECIMAL" property="amount" />
+  </resultMap>
+  
+  <resultMap id="BaseResultMapMoneyOrder" type="cn.rebornauto.platform.business.vo.StatMoneyOrder">
+    <result column="customerName" jdbcType="VARCHAR" property="customerName" />
+    <result column="totalMoney" jdbcType="DECIMAL" property="totalMoney" />
+  </resultMap>
+  
+  <resultMap id="BaseResultMapCustomerVO" type="cn.rebornauto.platform.business.vo.StatCustomerVO">
+    <result column="customerId" jdbcType="VARCHAR" property="customerId" />
+    <result column="customerName" jdbcType="VARCHAR" property="customerName" />
+    <result column="realPayment" jdbcType="DECIMAL" property="realPayment" />
+    <result column="realPaymentFin" jdbcType="VARCHAR" property="realPaymentFin" />
+    <result column="agentCommission" jdbcType="DECIMAL" property="agentCommission" />
+    <result column="agentCommissionFin" jdbcType="VARCHAR" property="agentCommissionFin" />
+    <result column="payAmount" jdbcType="DECIMAL" property="payAmount" />
+    <result column="payAmountFin" jdbcType="VARCHAR" property="payAmountFin" />
+    <result column="payCount" jdbcType="INTEGER" property="payCount" />
+    <result column="avgAmount" jdbcType="DECIMAL" property="avgAmount" />
+    <result column="avgAmountFin" jdbcType="VARCHAR" property="avgAmountFin" />
+    <result column="leftAmount" jdbcType="DECIMAL" property="leftAmount" />
+    <result column="leftAmountFin" jdbcType="VARCHAR" property="leftAmountFin" />
+    <result column="applyAmount" jdbcType="DECIMAL" property="applyAmount" />
+    <result column="applyAmountFin" jdbcType="VARCHAR" property="applyAmountFin" />
+  </resultMap>
+  
+  <resultMap id="BaseResultMapMonthStatVO" type="cn.rebornauto.platform.business.vo.MonthStatVO">
+    <result column="customerName" jdbcType="VARCHAR" property="customerName" />
+    <result column="completeTime" jdbcType="TIMESTAMP" property="completeTime" />
+    <result column="agentName" jdbcType="VARCHAR" property="agentName" />
+    <result column="idType" jdbcType="VARCHAR" property="idType" />
+    <result column="agentIdcardno" jdbcType="VARCHAR" property="agentIdcardno" />
+    <result column="cardType" jdbcType="VARCHAR" property="cardType" />
+    <result column="agentMobile" jdbcType="VARCHAR" property="agentMobile" />
+    <result column="daiZheng" jdbcType="VARCHAR" property="daiZheng" />
+    <result column="amount" jdbcType="VARCHAR" property="amount" />
+    <result column="taxableIncomeRate" jdbcType="VARCHAR" property="taxableIncomeRate" />
+    <result column="taxYiju" jdbcType="VARCHAR" property="taxYiju" />
+    <result column="taxRate" jdbcType="VARCHAR" property="taxRate" />
+    <result column="qcNumber" jdbcType="VARCHAR" property="qcNumber" />
+    <result column="taxPayable" jdbcType="VARCHAR" property="taxPayable" />
+    <result column="accumulatedTaxPaid" jdbcType="VARCHAR" property="accumulatedTaxPaid" />
+    <result column="taxRefundable" jdbcType="VARCHAR" property="taxRefundable" />
+  </resultMap>
+  
+  <select id="selectRechargeStatByQuery" resultType="cn.rebornauto.platform.business.vo.Stat">
+        <if test="q.queryType == 'QUERY_BY_DAY'">
+        SELECT DATE_FORMAT(a.arrivetime,'%Y%m%d') as dayOrMonth,sum(a.agent_commission) as amount
+		from t_dai_zheng_recharge a
+		join t_customer_info b on a.customer_id = b.id and b.data_status =1 
+		where a.recharge =3 and a.data_status =1 
+            and DATE_FORMAT(a.arrivetime,'%Y%m%d') = DATE_FORMAT(#{q.date},'%Y%m%d')
+            <if test="q.customerId != null and q.customerId != '' and q.customerId != '-1'">
+            and b.id = #{q.customerId}
+            </if>
+            group by DATE_FORMAT(a.arrivetime,'%Y%m%d')
+            order by sum(a.agent_commission) desc
+        </if>
+        <if test="q.queryType == 'QUERY_BY_MONTH'">
+        SELECT DATE_FORMAT(a.arrivetime,'%Y%m') as dayOrMonth,sum(a.agent_commission) as amount
+		from t_dai_zheng_recharge a
+		join t_customer_info b on a.customer_id = b.id and b.data_status =1 
+		where a.recharge =3 and a.data_status =1 
+            and DATE_FORMAT(a.arrivetime,'%Y%m') = DATE_FORMAT(#{q.date},'%Y%m')
+            <if test="q.customerId != null and q.customerId != '' and q.customerId != '-1'">
+            and b.id = #{q.customerId}
+            </if>
+            group by DATE_FORMAT(a.arrivetime,'%Y%m')
+            order by sum(a.agent_commission) desc
+        </if>
+  </select>
+  
+  <select id="selectPaymentStatByQuery" resultType="cn.rebornauto.platform.business.vo.Stat">
+        <if test="q.queryType == 'QUERY_BY_DAY'">
+        	SELECT DATE_FORMAT(a.complete_time,'%Y%m%d') as dayOrMonth,sum(a.amount) as amount 
+	        from t_transaction_flow a
+	        join t_customer_info b on a.customer_id = b.id and b.data_status =1 
+	        where DATE_FORMAT(a.complete_time,'%Y%m%d') = DATE_FORMAT(#{q.date},'%Y%m%d')
+	        and a.pay_status =2 
+	        <if test="q.customerId != null and q.customerId != '' and q.customerId != '-1'">
+            and b.id = #{q.customerId}
+            </if>
+	        group by DATE_FORMAT(a.complete_time,'%Y%m%d')
+	        order by sum(a.amount) desc
+        </if>
+        <if test="q.queryType == 'QUERY_BY_MONTH'">
+	        SELECT DATE_FORMAT(a.complete_time,'%Y%m') as dayOrMonth,sum(a.amount) as amount 
+	        from t_transaction_flow a
+	        join t_customer_info b on a.customer_id = b.id and b.data_status =1 
+	        where DATE_FORMAT(a.complete_time,'%Y%m') = DATE_FORMAT(#{q.date},'%Y%m')
+	        and a.pay_status =2 
+	        <if test="q.customerId != null and q.customerId != '' and q.customerId != '-1'">
+            and b.id = #{q.customerId}
+            </if>
+	        group by DATE_FORMAT(a.complete_time,'%Y%m')
+	        order by sum(a.amount) desc
+        </if>
+  </select>
+  
+  
+  <select id="selectRechargeStatMoneyOrderByQuery" resultMap="BaseResultMapMoneyOrder">
+	  SELECT b.customer_nickname customerName,sum(a.agent_commission) as totalMoney
+	  from t_dai_zheng_recharge a 
+	  join t_customer_info b on a.customer_id = b.id and b.data_status =1 
+	  where 1=1
+	  <if test="q.queryType == 'QUERY_BY_YEAR'">
+	  	and DATE_FORMAT(a.arrivetime,'%Y') = #{q.dateStr}
+	  </if>
+	  <if test="q.queryType == 'QUERY_BY_MONTH'">
+	  	and DATE_FORMAT(a.arrivetime,'%Y%m') = #{q.dateStr}
+	  </if>
+	  <if test="q.queryType == 'QUERY_BY_DAY'">
+	  	and DATE_FORMAT(a.arrivetime,'%Y%m%d') = #{q.dateStr}
+	  </if>
+	  <if test="q.customerId != null and q.customerId != '' and q.customerId != '-1'">
+        and b.id = #{q.customerId}
+      </if>
+	  and a.recharge =3 
+	  and a.data_status =1 
+	  group by b.customer_nickname
+	  order by sum(a.agent_commission) desc
+  </select>
+  
+  <select id="selectPaymentStatMoneyOrderByQuery" resultMap="BaseResultMapMoneyOrder">
+	  SELECT b.customer_nickname customerName,sum(a.amount) as totalMoney
+	  from t_transaction_flow a 
+	  join t_customer_info b on a.customer_id = b.id and b.data_status =1 
+	  where 1=1
+	  <if test="q.queryType == 'QUERY_BY_YEAR'">
+	  	and DATE_FORMAT(a.complete_time,'%Y') = #{q.dateStr}
+	  </if>
+	  <if test="q.queryType == 'QUERY_BY_MONTH'">
+	  	and DATE_FORMAT(a.complete_time,'%Y%m') = #{q.dateStr}
+	  </if>
+	  <if test="q.queryType == 'QUERY_BY_DAY'">
+	  	and DATE_FORMAT(a.complete_time,'%Y%m%d') = #{q.dateStr}
+	  </if>
+	  <if test="q.customerId != null and q.customerId != '' and q.customerId != '-1'">
+        and b.id = #{q.customerId}
+      </if>
+	  and a.pay_status =2 
+	  group by b.customer_nickname 
+	  order by sum(a.amount) desc
+  </select>
+  
+  <select id="selectStatCustomerByQuery" resultMap="BaseResultMapCustomerVO">
+	  	SELECT a.id customerId,a.customer_name customerName
+	  		,c.real_payment realPayment
+	  		,Format(c.real_payment, 2) realPaymentFin
+	  		,c.agent_commission agentCommission
+	  		,Format(c.agent_commission, 2) agentCommissionFin
+	  		,d.amount2 payAmount
+	  		,Format(d.amount2, 2) payAmountFin
+	  		,d.agent_id payCount
+	  		,ROUND(d.amount,2) avgAmount
+	  		,Format(d.amount, 2) avgAmountFin
+	  		,c.agent_commission-d.amount2 leftAmount
+	  		,Format(c.agent_commission-d.amount2, 2) leftAmountFin
+	  		,e.apply_amount applyAmount 
+	  		,Format(e.apply_amount, 2) applyAmountFin
+	  	from t_customer_info a
+		left join t_customer_quota b on a.id = b.customer_id
+		left join (SELECT customer_id,sum(real_payment)real_payment,sum(agent_commission)agent_commission 
+				   from t_dai_zheng_recharge 
+				   where recharge =3 and data_status =1 
+				   <if test="q.queryTime !=null and q.queryTime!='' ">
+		            	and DATE_FORMAT(arrivetime,'%Y-%m-%d') between #{q.startTime,jdbcType=TIMESTAMP} and
+		            	#{q.endTime,jdbcType=TIMESTAMP}
+		           </if>
+				   group by customer_id) c on a.id = c.customer_id
+		left join (SELECT customer_id,count(DISTINCT agent_id)agent_id,avg(amount)amount,sum(amount)amount2 
+				   from t_transaction_flow 
+				   where pay_status =2 
+				   <if test="q.queryTime !=null and q.queryTime!='' ">
+		            	and DATE_FORMAT(complete_time,'%Y-%m-%d') between #{q.startTime,jdbcType=TIMESTAMP} and
+		            	#{q.endTime,jdbcType=TIMESTAMP}
+		           </if>
+				   group by customer_id) d on a.id = d.customer_id
+		left join (SELECT customer_id,sum(apply_amount)apply_amount 
+				   from t_make_invoice_detail 
+				   where make_invoice_status =2 and data_status =1 
+				   <if test="q.queryTime !=null and q.queryTime!='' ">
+		            	and DATE_FORMAT(invoice_time,'%Y-%m-%d') between #{q.startTime,jdbcType=TIMESTAMP} and
+		            	#{q.endTime,jdbcType=TIMESTAMP}
+		           </if>
+				   group by customer_id) e on a.id = e.customer_id
+		order by a.id
+  </select>
+  
+  
+  	<sql id="query">
+        <if test="q.completeTime !=null and q.completeTime!='' ">
+            and  DATE_FORMAT(a.complete_time,'%Y-%m') BETWEEN #{q.startTime,jdbcType=VARCHAR} and #{q.startTime,jdbcType=VARCHAR})tb
+        </if>
+    </sql>
+    <sql id="pageQuery">
+        <if test="p.offset != null and p.pageSize != null">
+            limit #{p.offset,jdbcType=INTEGER},#{p.pageSize,jdbcType=INTEGER}
+        </if>
+    </sql>
+    <select id="monthStatCount" resultType="Integer">
+    	<choose>
+            <when test="q.daiZhengArea == 'tianjin'">
+                SELECT count(*)	from
+				(SELECT c.customer_name,a.complete_time,a.agent_name,if(b.id_type =4,'身份证','其他') as id_type,b.agent_idcardno,if(b.nationality_id =1,'中国','其他') as card_type,b.agent_mobile,if(a.dai_zheng_id =1,'天津','上海') as dai_zheng,a.amount,0.12 as 		yingshui_rate,round(a.amount*0.12,2) as tax_yiju,
+				case when round(a.amount*0.12,2)*12 <![CDATA[ <= ]]>30000 then 0.05 
+				when round(a.amount*0.12,2)*12 BETWEEN 30001 and 90000  then 0.1 
+				when round(a.amount*0.12,2)*12 BETWEEN 90001 and 300000  then 0.2
+				when round(a.amount*0.12,2)*12 BETWEEN 300001 and 500000  then 0.3
+				when round(a.amount*0.12,2)*12 <![CDATA[ > ]]> 500000  then 0.35 end as tax_rate,
+				case when round(a.amount*0.12,2)*12 <![CDATA[ <= ]]>30000 then 0
+				when round(a.amount*0.12,2)*12 BETWEEN 30001 and 90000  then 1500/12	
+				when round(a.amount*0.12,2)*12 BETWEEN 90001 and 300000  then 10500/12
+				when round(a.amount*0.12,2)*12 BETWEEN 300001 and 500000  then 40500/12
+				when round(a.amount*0.12,2)*12 <![CDATA[ > ]]> 500000  then 65500/12 end as qc_number 
+				from t_transaction_flow a
+				join t_agent_bank_no_info d on a.open_bank_no = d.agent_open_bank_no	
+				join t_agent_info b on d.agent_id = b.id
+				join t_customer_info c on a.customer_id =c.id
+				where a.pay_status =2
+		        <include refid="query"></include>
+            </when>
+            <when test="q.daiZhengArea == 'shanghai'">
+                SELECT count(*) FROM (
+					SELECT c.customer_name,a.complete_time,a.agent_name,IF (b.id_type=4,'身份证','其他') AS id_type,b.agent_idcardno,IF (b.nationality_id=1,'中国','其他') AS card_type,b.agent_mobile,IF (a.dai_zheng_id=1,'天津','上海') AS dai_zheng,a.amount,0.012 AS yingshui_rate,round(a.amount*0.012,2) as taxPayable
+					FROM t_transaction_flow a 
+					JOIN t_agent_bank_no_info d ON a.open_bank_no=d.agent_open_bank_no 
+					JOIN t_agent_info b ON d.agent_id=b.id JOIN t_customer_info c ON a.customer_id=c.id 
+					WHERE a.pay_status=2
+					<include refid="query"></include>
+            </when>
+            <otherwise>
+            </otherwise>
+        </choose>
+    </select>
+    <select id="selectMonthStatList" resultMap="BaseResultMapMonthStatVO">
+        <choose>
+            <when test="q.daiZhengArea == 'tianjin'">
+                SELECT tb.customer_name as customerName,tb.complete_time as completeTime,tb.agent_name as agentName,tb.id_type as idType,tb.agent_idcardno as agentIdcardno,tb.card_type as cardType,tb.agent_mobile as agentMobile,tb.dai_zheng as daiZheng,Format(tb.amount, 2) amount,concat(tb.yingshui_rate*100,'%') as taxableIncomeRate,Format(tb.tax_yiju, 2) as taxYiju,concat(tb.tax_rate*100,'%') as taxRate,round(tb.qc_number,2) as qcNumber,
+				Format(if(tb.tax_yiju*tb.tax_rate-tb.qc_number >0,round(tb.tax_yiju*tb.tax_rate-tb.qc_number,2),0), 2) as taxPayable,
+		                '' as accumulatedTaxPaid,
+				Format(if(tb.tax_yiju*tb.tax_rate-tb.qc_number >0,round(tb.tax_yiju*tb.tax_rate-tb.qc_number,2),0), 2) as taxRefundable	from
+				(SELECT c.customer_name,a.complete_time,a.agent_name,if(b.id_type =4,'身份证','其他') as id_type,b.agent_idcardno,if(b.nationality_id =1,'中国','其他') as card_type,b.agent_mobile,if(a.dai_zheng_id =1,'天津','上海') as dai_zheng,a.amount,0.12 as 		yingshui_rate,round(a.amount*0.12,2) as tax_yiju,
+				case when round(a.amount*0.12,2)*12 <![CDATA[ <= ]]>30000 then 0.05 
+				when round(a.amount*0.12,2)*12 BETWEEN 30001 and 90000  then 0.1 
+				when round(a.amount*0.12,2)*12 BETWEEN 90001 and 300000  then 0.2
+				when round(a.amount*0.12,2)*12 BETWEEN 300001 and 500000  then 0.3
+				when round(a.amount*0.12,2)*12 <![CDATA[ > ]]> 500000  then 0.35 end as tax_rate,
+				case when round(a.amount*0.12,2)*12 <![CDATA[ <= ]]>30000 then 0
+				when round(a.amount*0.12,2)*12 BETWEEN 30001 and 90000  then 1500/12	
+				when round(a.amount*0.12,2)*12 BETWEEN 90001 and 300000  then 10500/12
+				when round(a.amount*0.12,2)*12 BETWEEN 300001 and 500000  then 40500/12
+				when round(a.amount*0.12,2)*12 <![CDATA[ > ]]> 500000  then 65500/12 end as qc_number 
+				from t_transaction_flow a
+				join t_agent_bank_no_info d on a.open_bank_no = d.agent_open_bank_no	
+				join t_agent_info b on d.agent_id = b.id
+				join t_customer_info c on a.customer_id =c.id
+				where a.pay_status =2
+				<include refid="query"></include>
+				order by tb.complete_time
+		        <include refid="pageQuery"></include>
+            </when>
+            <when test="q.daiZhengArea == 'shanghai'">
+                SELECT tb.customer_name AS customerName,tb.complete_time AS completeTime,tb.agent_name AS agentName,tb.id_type AS idType,tb.agent_idcardno AS agentIdcardno,tb.card_type AS cardType,tb.agent_mobile AS agentMobile,tb.dai_zheng AS daiZheng,Format(tb.amount,2) amount,concat(tb.yingshui_rate*100,'%') AS taxableIncomeRate,tb.taxPayable 
+                FROM (
+					SELECT c.customer_name,a.complete_time,a.agent_name,IF (b.id_type=4,'身份证','其他') AS id_type,b.agent_idcardno,IF (b.nationality_id=1,'中国','其他') AS card_type,b.agent_mobile,IF (a.dai_zheng_id=1,'天津','上海') AS dai_zheng,a.amount,0.012 AS yingshui_rate,round(a.amount*0.012,2) as taxPayable
+					FROM t_transaction_flow a 
+					JOIN t_agent_bank_no_info d ON a.open_bank_no=d.agent_open_bank_no 
+					JOIN t_agent_info b ON d.agent_id=b.id JOIN t_customer_info c ON a.customer_id=c.id 
+					WHERE a.pay_status=2 
+					<include refid="query"></include>
+				order by tb.complete_time
+		        <include refid="pageQuery"></include>
+            </when>
+            <otherwise>
+            </otherwise>
+        </choose>
+    </select>
+    
+    <select id="excelMonthStatList" resultMap="BaseResultMapMonthStatVO">
+		<choose>
+            <when test="q.daiZhengArea == 'tianjin'">
+                SELECT tb.customer_name as customerName,tb.complete_time as completeTime,tb.agent_name as agentName,tb.id_type as idType,tb.agent_idcardno as agentIdcardno,tb.card_type as cardType,tb.agent_mobile as agentMobile,tb.dai_zheng as daiZheng,Format(tb.amount, 2) amount,concat(tb.yingshui_rate*100,'%') as taxableIncomeRate,Format(tb.tax_yiju, 2) as taxYiju,concat(tb.tax_rate*100,'%') as taxRate,round(tb.qc_number,2) as qcNumber,
+				Format(if(tb.tax_yiju*tb.tax_rate-tb.qc_number >0,round(tb.tax_yiju*tb.tax_rate-tb.qc_number,2),0), 2) as taxPayable,
+		                '' as accumulatedTaxPaid,
+				Format(if(tb.tax_yiju*tb.tax_rate-tb.qc_number >0,round(tb.tax_yiju*tb.tax_rate-tb.qc_number,2),0), 2) as taxRefundable	from
+				(SELECT c.customer_name,a.complete_time,a.agent_name,if(b.id_type =4,'身份证','其他') as id_type,b.agent_idcardno,if(b.nationality_id =1,'中国','其他') as card_type,b.agent_mobile,if(a.dai_zheng_id =1,'天津','上海') as dai_zheng,a.amount,0.12 as 		yingshui_rate,round(a.amount*0.12,2) as tax_yiju,
+				case when round(a.amount*0.12,2)*12 <![CDATA[ <= ]]>30000 then 0.05 
+				when round(a.amount*0.12,2)*12 BETWEEN 30001 and 90000  then 0.1 
+				when round(a.amount*0.12,2)*12 BETWEEN 90001 and 300000  then 0.2
+				when round(a.amount*0.12,2)*12 BETWEEN 300001 and 500000  then 0.3
+				when round(a.amount*0.12,2)*12 <![CDATA[ > ]]> 500000  then 0.35 end as tax_rate,
+				case when round(a.amount*0.12,2)*12 <![CDATA[ <= ]]>30000 then 0
+				when round(a.amount*0.12,2)*12 BETWEEN 30001 and 90000  then 1500/12	
+				when round(a.amount*0.12,2)*12 BETWEEN 90001 and 300000  then 10500/12
+				when round(a.amount*0.12,2)*12 BETWEEN 300001 and 500000  then 40500/12
+				when round(a.amount*0.12,2)*12 <![CDATA[ > ]]> 500000  then 65500/12 end as qc_number 
+				from t_transaction_flow a
+				join t_agent_bank_no_info d on a.open_bank_no = d.agent_open_bank_no	
+				join t_agent_info b on d.agent_id = b.id
+				join t_customer_info c on a.customer_id =c.id
+				where a.pay_status =2
+				<include refid="query"></include>
+				order by tb.complete_time
+            </when>
+            <when test="q.daiZhengArea == 'shanghai'">
+                SELECT tb.customer_name AS customerName,tb.complete_time AS completeTime,tb.agent_name AS agentName,tb.id_type AS idType,tb.agent_idcardno AS agentIdcardno,tb.card_type AS cardType,tb.agent_mobile AS agentMobile,tb.dai_zheng AS daiZheng,Format(tb.amount,2) amount,concat(tb.yingshui_rate*100,'%') AS taxableIncomeRate,tb.taxPayable 
+                FROM (
+					SELECT c.customer_name,a.complete_time,a.agent_name,IF (b.id_type=4,'身份证','其他') AS id_type,b.agent_idcardno,IF (b.nationality_id=1,'中国','其他') AS card_type,b.agent_mobile,IF (a.dai_zheng_id=1,'天津','上海') AS dai_zheng,a.amount,0.012 AS yingshui_rate,round(a.amount*0.012,2) as taxPayable
+					FROM t_transaction_flow a 
+					JOIN t_agent_bank_no_info d ON a.open_bank_no=d.agent_open_bank_no 
+					JOIN t_agent_info b ON d.agent_id=b.id JOIN t_customer_info c ON a.customer_id=c.id 
+					WHERE a.pay_status=2 
+					<include refid="query"></include>
+				order by tb.complete_time
+            </when>
+            <otherwise>
+            </otherwise>
+        </choose>
+    </select>
+  
+</mapper>

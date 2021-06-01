@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.AgentCustomerMapper">
+    <resultMap id="VoResultMap" type="cn.rebornauto.platform.business.vo.PaymentStatisticsVo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="month" jdbcType="VARCHAR" property="month" />
+        <result column="agent_name" jdbcType="VARCHAR" property="agentName" />
+        <result column="idcardno" jdbcType="VARCHAR" property="idcardno" />
+        <result column="phone" jdbcType="VARCHAR" property="phone" />
+        <result column="amount" jdbcType="DECIMAL" property="paymentSum" />
+    </resultMap>
+    <sql id="pageSql">
+       limit #{p.offset,jdbcType=INTEGER},#{p.pageSize,jdbcType=INTEGER}
+    </sql>
+    <sql id="queryWhereSql">
+        <if test="q.customerId !=null and q.customerId!='' ">
+            and a.id IN (SELECT agent_id from t_agent_customer where customer_id = #{q.customerId,jdbcType=VARCHAR})
+        </if>
+        <if test="q.agentName !=null and q.agentName!='' ">
+            and a.agent_name LIKE
+            CONCAT(CONCAT('%',#{q.agentName,jdbcType=VARCHAR}),'%')
+        </if>
+        <if test="q.month !=null and q.month!='' ">
+            and b.yearmonth = #{q.month,jdbcType=VARCHAR}
+        </if>
+    </sql>
+    <select id="queryPaymentStatistics" resultMap="VoResultMap" >
+        SELECT b.yearmonth as month,a.agent_name as agent_name,a.agent_mobile as phone,
+        a.agent_idcardno as idcardno,sum(b.loan_amount) as amount
+        from t_agent_info a
+        join t_agent_quota b on a.agent_idcardno =b.agent_idcardno
+        where b.data_status = 1
+        <if test="q!=null">
+            <include refid="queryWhereSql" />
+        </if>
+        group by a.agent_name,a.agent_idcardno
+        ORDER BY amount DESC
+        <if test="p!=null">
+            <include refid="pageSql" />
+        </if>
+    </select>
+    <select id="countByQueryPaymentStatistics" resultType="long">
+        SELECT count(1) FROM ( SELECT count(1)
+        from  t_agent_info a
+        join t_agent_quota b on a.agent_idcardno =b.agent_idcardno
+        where b.data_status = 1
+        <if test="q!=null">
+            <include refid="queryWhereSql" />
+        </if>
+        group by a.agent_name,a.agent_idcardno) as a
+    </select>
+    <select id="queryPaymentStatisticsForExport" resultMap="VoResultMap" >
+        SELECT b.yearmonth as month,a.agent_name as agent_name,a.agent_mobile as phone,
+        a.agent_idcardno as idcardno,sum(b.loan_amount) as amount
+        from t_agent_info a
+        join t_agent_quota b on a.agent_idcardno =b.agent_idcardno
+        where b.data_status = 1
+        <if test="q!=null">
+            <include refid="queryWhereSql" />
+        </if>
+        group by a.agent_name,a.agent_idcardno
+        ORDER BY amount DESC
+    </select>
+
+    <select id="listByAgentId" resultMap="BaseResultMap">
+        select * FROM t_agent_customer
+        where agent_id = #{agentId}
+    </select>
+</mapper>

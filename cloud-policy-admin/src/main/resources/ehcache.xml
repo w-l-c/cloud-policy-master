@@ -1,0 +1,38 @@
+<config
+        xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+        xmlns='http://www.ehcache.org/v3'
+        xmlns:jsr107='http://www.ehcache.org/v3/jsr107'
+        xsi:schemaLocation="
+        http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.0.xsd
+        http://www.ehcache.org/v3/jsr107 http://www.ehcache.org/schema/ehcache-107-ext-3.0.xsd">
+
+    <service>
+        <jsr107:defaults enable-management="true" enable-statistics="true"/>
+    </service>
+
+    <cache-template name="responseCache">
+        <key-type>java.lang.Object</key-type>
+        <value-type>java.lang.Object</value-type>
+        <expiry>
+            <ttl unit="minutes">3</ttl>
+        </expiry>
+        <heap unit="entries">2000</heap>
+    </cache-template>
+
+    <cache alias="stringCache" uses-template="responseCache">
+    </cache>
+
+    <cache alias="overrideCache">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.lang.String</value-type>
+        <heap unit="entries">2000</heap>
+        <jsr107:mbeans enable-management="false" enable-statistics="false"/>
+    </cache>
+
+    <cache alias="overrideOneCache">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.lang.String</value-type>
+        <heap unit="entries">2000</heap>
+        <jsr107:mbeans enable-statistics="false"/>
+    </cache>
+</config>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.CustomerTotalQuotaMapper">
+  <resultMap id="BaseResultMap" type="cn.rebornauto.platform.business.entity.CustomerTotalQuota">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="customer_balance" jdbcType="DECIMAL" property="customerBalance" />
+    <result column="available_balance" jdbcType="DECIMAL" property="availableBalance" />
+    <result column="frozen_amount" jdbcType="DECIMAL" property="frozenAmount" />
+    <result column="pending_appr_amount" jdbcType="DECIMAL" property="pendingApprAmount" />
+    <result column="loan_amount" jdbcType="DECIMAL" property="loanAmount" />
+    <result column="recharge_amount" jdbcType="DECIMAL" property="rechargeAmount" />
+    <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="createoper" jdbcType="VARCHAR" property="createoper" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="modifyoper" jdbcType="VARCHAR" property="modifyoper" />
+    <result column="modifytime" jdbcType="TIMESTAMP" property="modifytime" />
+  </resultMap>
+  <select id="selectByCustomerId" resultMap="BaseResultMap">
+    select * from t_customer_total_quota
+    where data_status = 1
+  </select>
+</mapper>

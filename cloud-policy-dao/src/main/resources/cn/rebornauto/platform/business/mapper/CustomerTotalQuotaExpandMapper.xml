@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.CustomerTotalQuotaMapper">
+    
+    
+	<resultMap id="CustomerQuotaVOMap" type="cn.rebornauto.platform.business.vo.CustomerQuotaVo">
+		<!--
+          WARNING - @mbg.generated
+        -->
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="customer_balance" jdbcType="DECIMAL" property="customerBalance" />
+		<result column="frozen_amount" jdbcType="DECIMAL" property="frozenAmount" />
+		<result column="pending_appr_amount" jdbcType="DECIMAL" property="pendingApprAmount" />
+		<result column="loan_amount" jdbcType="DECIMAL" property="loanAmount" />
+		<result column="recharge_amount" jdbcType="DECIMAL" property="rechargeAmount" />
+
+	</resultMap>
+	<select id="selectVo4CustomerTotalQuota" resultMap="CustomerQuotaVOMap">
+        select a.id,a.customer_id,a.customer_balance,
+        a.pending_appr_amount,a.loan_amount,a.recharge_amount,
+        c.frozenAmount
+        from t_customer_quota a
+				LEFT JOIN (SELECT customer_id cId,sum(amount) frozenAmount FROM t_transaction_flow
+					where (pay_status = 4 or pay_status = 5 ) ) c ON a.customer_id = c.cId
+        where data_status = 1
+    </select>
+    <update id="cancelCustomerTotalQuotaByCustomerId" >
+	  	update t_customer_total_quota 
+	  	set loan_amount = loan_amount - #{amount,jdbcType=DECIMAL}
+	  	,customer_balance = customer_balance + #{amount,jdbcType=DECIMAL}
+	  	,available_balance = available_balance + #{amount,jdbcType=DECIMAL}
+	  	where data_status=1
+    </update>
+    
+    <update id="addCustomerTotalQuotaByCustomerId" >
+	  	update t_customer_total_quota 
+	  	set loan_amount = loan_amount + #{amount,jdbcType=DECIMAL}
+	  	,customer_balance = customer_balance - #{amount,jdbcType=DECIMAL}
+	  	,available_balance = available_balance - #{amount,jdbcType=DECIMAL}
+	  	where data_status=1
+    </update>
+</mapper>

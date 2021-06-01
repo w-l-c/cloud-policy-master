@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.MakeInvoiceDetailMapper">
+  <resultMap id="BaseResultMap" type="cn.rebornauto.platform.business.entity.MakeInvoiceDetail">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="invoice_no" jdbcType="VARCHAR" property="invoiceNo" />
+    <result column="apply_num" jdbcType="INTEGER" property="applyNum" />
+    <result column="invoice_time" jdbcType="TIMESTAMP" property="invoiceTime" />
+    <result column="customer_id" jdbcType="VARCHAR" property="customerId" />
+    <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+    <result column="apply_amount" jdbcType="DECIMAL" property="applyAmount" />
+    <result column="invoice_amount" jdbcType="DECIMAL" property="invoiceAmount" />
+    <result column="express_company" jdbcType="VARCHAR" property="expressCompany" />
+    <result column="express_no" jdbcType="VARCHAR" property="expressNo" />
+    <result column="invoice_title" jdbcType="VARCHAR" property="invoiceTitle" />
+    <result column="invoice_type" jdbcType="INTEGER" property="invoiceType" />
+    <result column="taxpayer_type" jdbcType="INTEGER" property="taxpayerType" />
+    <result column="taxpayer_number" jdbcType="VARCHAR" property="taxpayerNumber" />
+    <result column="reg_address" jdbcType="VARCHAR" property="regAddress" />
+    <result column="open_bank" jdbcType="VARCHAR" property="openBank" />
+    <result column="open_bank_no" jdbcType="VARCHAR" property="openBankNo" />
+    <result column="invoice_content" jdbcType="VARCHAR" property="invoiceContent" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="receiver" jdbcType="VARCHAR" property="receiver" />
+    <result column="mobile" jdbcType="VARCHAR" property="mobile" />
+    <result column="invoice_pic_url" jdbcType="VARCHAR" property="invoicePicUrl" />
+    <result column="make_invoice_status" jdbcType="INTEGER" property="makeInvoiceStatus" />
+    <result column="post_status" jdbcType="INTEGER" property="postStatus" />
+    <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="apply_oper" jdbcType="VARCHAR" property="applyOper" />
+    <result column="apply_time" jdbcType="TIMESTAMP" property="applyTime" />
+    <result column="modifyoper" jdbcType="VARCHAR" property="modifyoper" />
+    <result column="modifytime" jdbcType="TIMESTAMP" property="modifytime" />
+    <result column="capital_amount" jdbcType="DECIMAL" property="capitalAmount" />
+    <result column="customer_service_rate" jdbcType="DECIMAL" property="customerServiceRate" />
+  </resultMap>
+</mapper>

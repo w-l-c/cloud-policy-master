@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.DaiZhengRechargeMapper">
+    <resultMap id="BaseResultVOMap" type="cn.rebornauto.platform.business.vo.RechargeVo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="applytime" jdbcType="TIMESTAMP" property="applytime" />
+        <result column="customer_id" jdbcType="VARCHAR" property="customerId" />
+        <result column="agent_commission" jdbcType="DECIMAL" property="agentCommission" />
+        <result column="real_payment" jdbcType="DECIMAL" property="realPayment" />
+        <result column="recharge" jdbcType="INTEGER" property="recharge" />
+        <result column="recharge_voucher_pic_url" jdbcType="VARCHAR" property="rechargeVoucherPicUrl" />
+        <result column="arrivetime" jdbcType="TIMESTAMP" property="arrivetime" />
+        <result column="dai_zheng_id" jdbcType="INTEGER" property="daiZhengId" />
+        <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+        <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+        <result column="customer_service_rate" jdbcType="DECIMAL" property="serviceRate" />
+        <result column="service_amount" jdbcType="DECIMAL" property="serviceAmount" />
+        <result column="realPaymentFin" jdbcType="VARCHAR" property="realPaymentFin" />
+        <result column="agentCommissionFin" jdbcType="VARCHAR" property="agentCommissionFin" />
+        <result column="checkoper" jdbcType="VARCHAR" property="checkoper" />
+    	<result column="checktime" jdbcType="TIMESTAMP" property="checktime" />
+    </resultMap>
+    <sql id="query">
+        <if test="q.customerId != null and q.customerId != ''">
+            and a.customer_id like concat(concat('%',#{q.customerId,jdbcType=VARCHAR}),'%')
+        </if>
+        <if test="q.customerName != null and q.customerName != ''">
+            and b.customer_name like concat(concat('%',#{q.customerName,jdbcType=VARCHAR}),'%')
+        </if>
+        <if test="q.arrivetime !=null and q.arrivetime!='' ">
+            and DATE_FORMAT(a.arrivetime,'%Y-%m-%d') between #{q.startTime,jdbcType=TIMESTAMP} and
+            #{q.endTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="q.recharge != null and q.recharge != ''">
+            and a.recharge = #{q.recharge,jdbcType=INTEGER}
+        </if>
+        <if test="q.applytime !=null and q.applytime!='' ">
+            and DATE_FORMAT(a.applytime,'%Y-%m-%d') between #{q.applyStartTime,jdbcType=TIMESTAMP} and
+            #{q.applyEndTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="q.checktime !=null and q.checktime!='' ">
+            and DATE_FORMAT(a.checktime,'%Y-%m-%d') between #{q.checkStartTime,jdbcType=TIMESTAMP} and
+            #{q.checkEndTime,jdbcType=TIMESTAMP}
+        </if>
+    </sql>
+    <sql id="pageQuery">
+        <if test="p.offset != null and p.pageSize != null">
+            limit #{p.offset,jdbcType=INTEGER},#{p.pageSize,jdbcType=INTEGER}
+        </if>
+
+    </sql>
+    <select id="count" resultType="Long">
+        select count(1) from t_dai_zheng_recharge a LEFT JOIN t_customer_info b on a.customer_id = b.id
+        where a.data_status = 1
+        <include refid="query"></include>
+    </select>
+    <select id="page" resultMap="BaseResultVOMap">
+        SELECT a.*,b.customer_name
+        ,Format(a.real_payment, 2) realPaymentFin
+        ,Format(a.agent_commission, 2) agentCommissionFin
+        from t_dai_zheng_recharge a LEFT JOIN t_customer_info b on a.customer_id = b.id
+        where a.data_status = 1
+        <include refid="query"></include>
+        order by a.recharge asc,a.applytime desc
+        <include refid="pageQuery"></include>
+    </select>
+    <select id="count4CheckList" resultType="Integer">
+        select count(1) from t_dai_zheng_recharge a LEFT JOIN t_customer_info b on a.customer_id = b.id
+        where a.data_status = 1 and a.recharge = 2
+        <include refid="query"></include>
+    </select>
+    <select id="page4CheckList" resultMap="BaseResultVOMap">
+        SELECT a.*,b.customer_name
+        ,Format(a.real_payment, 2) realPaymentFin
+        ,Format(a.agent_commission, 2) agentCommissionFin
+        from t_dai_zheng_recharge a LEFT JOIN t_customer_info b on a.customer_id = b.id
+        where a.data_status = 1 and a.recharge = 2
+        <include refid="query"></include>
+        order by applytime DESC
+        <include refid="pageQuery"></include>
+    </select>
+    
+    <select id="selectTotalRechargeAmount" resultType="java.math.BigDecimal">
+        select if(sum(real_payment) is null,0,sum(real_payment)) real_payment 
+        from t_dai_zheng_recharge 
+        where customer_id = #{q.customerId,jdbcType=VARCHAR} and data_status = 1 and recharge = 3
+    </select>
+    
+    <select id="selectRechargeExcelByQuery" resultMap="BaseResultVOMap">
+        SELECT a.*,b.customer_name
+        ,Format(a.real_payment, 2) realPaymentFin
+        ,Format(a.agent_commission, 2) agentCommissionFin
+        from t_dai_zheng_recharge a LEFT JOIN t_customer_info b on a.customer_id = b.id
+        where a.data_status = 1
+        <include refid="query"></include>
+        order by a.recharge asc,a.applytime desc
+    </select>
+
+</mapper>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.MakeInvoiceDetailMapper">
+  <resultMap id="BaseResultVoMap" type="cn.rebornauto.platform.business.vo.MakeInvoiceDetailVO">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="invoice_no" jdbcType="VARCHAR" property="invoiceNo" />
+    <result column="apply_num" jdbcType="INTEGER" property="applyNum" />
+    <result column="invoice_time" jdbcType="TIMESTAMP" property="invoiceTime" />
+    <result column="customer_id" jdbcType="VARCHAR" property="customerId" />
+    <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+    <result column="apply_amount" jdbcType="DECIMAL" property="applyAmount" />
+    <result column="invoice_amount" jdbcType="DECIMAL" property="invoiceAmount" />
+    <result column="express_company" jdbcType="VARCHAR" property="expressCompany" />
+    <result column="express_no" jdbcType="VARCHAR" property="expressNo" />
+    <result column="invoice_title" jdbcType="VARCHAR" property="invoiceTitle" />
+    <result column="invoice_type" jdbcType="INTEGER" property="invoiceType" />
+    <result column="invoice_type_name" jdbcType="VARCHAR" property="invoiceTypeName" />
+    <result column="taxpayer_type" jdbcType="INTEGER" property="taxpayerType" />
+    <result column="taxpayer_number" jdbcType="VARCHAR" property="taxpayerNumber" />
+    <result column="reg_address" jdbcType="VARCHAR" property="regAddress" />
+    <result column="open_bank" jdbcType="VARCHAR" property="openBank" />
+    <result column="open_bank_no" jdbcType="VARCHAR" property="openBankNo" />
+    <result column="invoice_content" jdbcType="VARCHAR" property="invoiceContent" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="receiver" jdbcType="VARCHAR" property="receiver" />
+    <result column="mobile" jdbcType="VARCHAR" property="mobile" />
+    <result column="invoice_pic_url" jdbcType="VARCHAR" property="invoicePicUrl" />
+    <result column="make_invoice_status" jdbcType="INTEGER" property="makeInvoiceStatus" />
+    <result column="post_status" jdbcType="INTEGER" property="postStatus" />
+    <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="apply_oper" jdbcType="VARCHAR" property="applyOper" />
+    <result column="apply_time" jdbcType="TIMESTAMP" property="applyTime" />
+    <result column="modifyoper" jdbcType="VARCHAR" property="modifyoper" />
+    <result column="modifytime" jdbcType="TIMESTAMP" property="modifytime" />
+    <result column="capital_amount" jdbcType="DECIMAL" property="capitalAmount" />
+    <result column="customer_service_rate" jdbcType="DECIMAL" property="customerServiceRate" />
+  </resultMap>
+  <sql id="query">
+        <if test="q.invoiceNo != null and q.invoiceNo != ''">
+            and a.invoice_no = #{q.invoiceNo,jdbcType=VARCHAR}
+        </if>
+        <if test="q.customerId != null and q.customerId != ''">
+            and a.customer_id like concat(concat('%',#{q.customerId,jdbcType=VARCHAR}),'%')
+        </if>
+        <if test="q.customerName != null and q.customerName != ''">
+            and b.customer_name like concat(concat('%',#{q.customerName,jdbcType=VARCHAR}),'%')
+        </if>
+        <if test="q.applyTime !=null and q.applyTime!='' ">
+            and DATE_FORMAT(a.apply_time,'%Y-%m-%d') between #{q.startApplyTime,jdbcType=TIMESTAMP} and
+            #{q.endApplyTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="q.invoiceTime !=null and q.invoiceTime!='' ">
+            and DATE_FORMAT(a.invoice_time,'%Y-%m-%d') between #{q.startInvoiceTime,jdbcType=TIMESTAMP} and
+            #{q.endInvoiceTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="q.postStatus != null and q.postStatus != '' and q.postStatus != 0">
+            and a.post_status = #{q.postStatus,jdbcType=INTEGER}
+        </if>
+        <if test="q.makeInvoiceStatus != null and q.makeInvoiceStatus != '' and q.makeInvoiceStatus != 0">
+            and a.make_invoice_status = #{q.makeInvoiceStatus,jdbcType=INTEGER}
+        </if>
+    </sql>
+    <sql id="pageQuery">
+        <if test="p.offset != null and p.pageSize != null">
+            limit #{p.offset,jdbcType=INTEGER},#{p.pageSize,jdbcType=INTEGER}
+        </if>
+
+    </sql>
+    <select id="count" resultType="Integer">
+        select count(1) from t_make_invoice_detail a LEFT JOIN t_customer_info b on a.customer_id = b.id
+        where a.data_status = 1
+        <include refid="query"></include>
+    </select>
+    <select id="list" resultMap="BaseResultVoMap">
+        SELECT a.*,b.customer_name,se.literal invoice_type_name
+        from t_make_invoice_detail a 
+        LEFT JOIN t_customer_info b on a.customer_id = b.id
+        LEFT JOIN sys_enums se on se.category='invoiceType' and se.enumvalue = a.invoice_type
+        where a.data_status = 1
+        <include refid="query"></include>
+        order by make_invoice_status,apply_time asc
+        <include refid="pageQuery"></include>
+    </select>
+    <select id="getTotalApplyAmount" resultType="java.math.BigDecimal">
+        select if(sum(apply_amount) is null,0,sum(apply_amount)) apply_amount 
+        from t_make_invoice_detail 
+        where customer_id = #{q.customerId,jdbcType=VARCHAR} and data_status = 1
+    </select>
+    <select id="selectByPrimaryKeyVO" resultMap="BaseResultVoMap">
+        SELECT a.*,b.customer_name,se.literal invoice_type_name
+        from t_make_invoice_detail a 
+        LEFT JOIN t_customer_info b on a.customer_id = b.id
+        LEFT JOIN sys_enums se on se.category='invoiceType' and se.enumvalue = a.invoice_type
+        where a.data_status = 1
+        and a.id = #{id,jdbcType=INTEGER}
+    </select>
+    
+    <select id="getTotalCapitalAmount" resultType="java.math.BigDecimal">
+        select if(sum(capital_amount) is null,0,sum(capital_amount)) capital_amount 
+        from t_make_invoice_detail 
+        where customer_id = #{q.customerId,jdbcType=VARCHAR} and data_status = 1
+    </select>
+</mapper>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.CustomerInfoMapper">
+  <resultMap id="BaseResultMap" type="cn.rebornauto.platform.business.entity.CustomerInfo">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+    <result column="customer_nickname" jdbcType="VARCHAR" property="customerNickname" />
+    <result column="service_rate" jdbcType="DECIMAL" property="serviceRate" />
+    <result column="invoice_title" jdbcType="VARCHAR" property="invoiceTitle" />
+    <result column="invoice_content" jdbcType="VARCHAR" property="invoiceContent" />
+    <result column="taxpayer_type" jdbcType="INTEGER" property="taxpayerType" />
+    <result column="taxpayer_number" jdbcType="VARCHAR" property="taxpayerNumber" />
+    <result column="customer_reg_address" jdbcType="VARCHAR" property="customerRegAddress" />
+    <result column="customer_open_name" jdbcType="VARCHAR" property="customerOpenName" />
+    <result column="customer_open_bank_name" jdbcType="VARCHAR" property="customerOpenBankName" />
+    <result column="customer_open_bank_code" jdbcType="VARCHAR" property="customerOpenBankCode" />
+    <result column="customer_open_bank_no" jdbcType="VARCHAR" property="customerOpenBankNo" />
+    <result column="entertime" jdbcType="TIMESTAMP" property="entertime" />
+    <result column="receiver" jdbcType="VARCHAR" property="receiver" />
+    <result column="customer_mobile" jdbcType="VARCHAR" property="customerMobile" />
+    <result column="customer_address" jdbcType="VARCHAR" property="customerAddress" />
+    <result column="customer_link_man" jdbcType="VARCHAR" property="customerLinkMan" />
+    <result column="customer_link_email" jdbcType="VARCHAR" property="customerLinkEmail" />
+    <result column="qr_code_img_pic_url" jdbcType="VARCHAR" property="qrCodeImgPicUrl" />
+    <result column="qr_code_img_post_url" jdbcType="VARCHAR" property="qrCodeImgPostUrl" />
+    <result column="qr_code_logo_img_pic_url" jdbcType="VARCHAR" property="qrCodeLogoImgPicUrl" />
+    <result column="dai_zheng_id" jdbcType="INTEGER" property="daiZhengId" />
+    <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+    <result column="is_auth" jdbcType="INTEGER" property="isAuth" />    
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="createoper" jdbcType="VARCHAR" property="createoper" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="modifyoper" jdbcType="VARCHAR" property="modifyoper" />
+    <result column="modifytime" jdbcType="TIMESTAMP" property="modifytime" />
+    <result column="tel" jdbcType="VARCHAR" property="tel" />
+    <result column="customer_sub_open_bank_name" jdbcType="VARCHAR" property="customerSubOpenBankName" />
+  </resultMap>
+</mapper>

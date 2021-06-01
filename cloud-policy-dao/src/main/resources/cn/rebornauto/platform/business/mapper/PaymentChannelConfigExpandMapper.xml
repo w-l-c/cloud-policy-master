@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.PaymentChannelConfigMapper">
+    <resultMap id="PaymentChannelConfigVOMap" type="cn.rebornauto.platform.common.data.view.PaymentChannelConfigVO">
+        <id column="id" jdbcType="INTEGER" property="id" />
+	    <result column="payment_channel_id" jdbcType="INTEGER" property="paymentChannelId" />
+	    <result column="key_" jdbcType="VARCHAR" property="key" />
+	    <result column="value_" jdbcType="VARCHAR" property="value" />
+	    <result column="dai_zheng_id" jdbcType="INTEGER" property="daiZhengId" />
+	    <result column="sys_switch" jdbcType="VARCHAR" property="sysSwitch" />
+	    <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+	    <result column="remark" jdbcType="VARCHAR" property="remark" />
+	    <result column="createoper" jdbcType="VARCHAR" property="createoper" />
+	    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+	    <result column="modifyoper" jdbcType="VARCHAR" property="modifyoper" />
+	    <result column="modifytime" jdbcType="TIMESTAMP" property="modifytime" />
+	    <result column="channel_name" jdbcType="VARCHAR" property="channelName" />
+    </resultMap>
+
+
+    <sql id="query">
+        <if test="q.paymentChannelId != null and q.paymentChannelId != '' and q.paymentChannelId != 0">
+            and a.payment_channel_id = #{q.paymentChannelId,jdbcType=INTEGER}
+        </if>
+        <if test="q.channelName != null and q.channelName != ''">
+            and b.channel_name like concat(concat('%',#{q.channelName,jdbcType=VARCHAR}),'%')
+        </if>
+        <if test="q.sysSwitch != null and q.sysSwitch != ''">
+            and a.sys_switch = #{q.sysSwitch,jdbcType=VARCHAR}
+        </if>
+        <if test="q.key != null and q.key != ''">
+            and a.key_ like concat(concat('%',#{q.key,jdbcType=VARCHAR}),'%')
+        </if>
+        <if test="q.value != null and q.value != ''">
+            and a.value_ like concat(concat('%',#{q.value,jdbcType=VARCHAR}),'%')
+        </if>
+        <if test="q.remark != null and q.remark != ''">
+            and a.remark like concat(concat('%',#{q.remark,jdbcType=VARCHAR}),'%')
+        </if>
+        <if test="q.dataStatus != null and q.dataStatus != '' and q.dataStatus != 0">
+            and a.data_status = #{q.dataStatus,jdbcType=INTEGER}
+        </if>
+    </sql>
+    <sql id="pageQuery">
+        <if test="p.offset != null and p.pageSize != null">
+            limit #{p.offset,jdbcType=INTEGER},#{p.pageSize,jdbcType=INTEGER}
+        </if>
+
+    </sql>
+    <select id="count" resultType="Integer">
+        select count(1) from t_payment_channel_config a LEFT JOIN t_payment_channel b on a.payment_channel_id = b.id
+        where 1 = 1
+        <include refid="query"></include>
+    </select>
+    <select id="list" resultMap="PaymentChannelConfigVOMap">
+        SELECT a.*,b.channel_name
+        from t_payment_channel_config a 
+        LEFT JOIN t_payment_channel b on a.payment_channel_id = b.id
+        where 1 = 1
+        <include refid="query"></include>
+        order by a.id asc
+        <include refid="pageQuery"></include>
+    </select>
+</mapper>

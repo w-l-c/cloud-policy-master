@@ -1,0 +1,48 @@
+logging:
+  path: /Users/xcl/work2018/inventory-financing/inventory-financing-web/target/log
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 100MB
+  resources:
+      staticLocations: classpath:/static/, classpath:/assets/   #ResourceProperties.java
+  mvc:  #WebMvcProperties
+      dateFormat: yyyy-MM-dd
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    modal:  HTML5
+    encoding: UTF-8
+  datasource:
+    url : jdbc:mysql://rm-uf636guq410osh7y1o.mysql.rds.aliyuncs.com:3306/cloud-policy-test?useUnicode=true&characterEncoding=UTF-8&&useSSL=false
+    username : test_root
+    password : $rBn20190125)Yh8!33
+    driverClassName : com.mysql.jdbc.Driver
+  cache:
+    jcache:
+      config: classpath:ehcache.xml
+
+server:
+    port: 9000
+    contextPath: /
+    servlet:
+      session:
+        timeout: 36000
+        cookie:
+          name: CLSYSSESSIONID
+          max-age: 360000
+    tomcat:
+      basedir:
+      protocol-header: x-forwarded-proto
+      remote-ip-header: x-forwarded-for
+      background-processor-delay: 30
+      accesslog:
+        enabled: false
+        accessLogEnabled: false
+
+
+mybatis:
+    mapper-locations: classpath*:cn/**/mapper/*.xml
+
+

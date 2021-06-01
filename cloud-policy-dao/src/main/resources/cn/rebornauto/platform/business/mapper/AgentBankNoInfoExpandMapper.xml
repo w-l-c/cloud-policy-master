@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.AgentBankNoInfoMapper">
+  <resultMap id="AgentBankNoVoMap" type="cn.rebornauto.platform.business.vo.AgentBankNoVo">
+          <result column="agent_open_bank_no" jdbcType="VARCHAR" property="agentOpenBankNo" />
+          <result column="agent_open_bank_name" jdbcType="VARCHAR" property="agentOpenBankName" />   
+  </resultMap>
+  
+  	<resultMap id="AgentInfoVOMap" type="cn.rebornauto.platform.business.vo.AgentInfoVO">
+        <result column="agent_id" jdbcType="INTEGER" property="agentId" />
+        <result column="agent_idcardno" jdbcType="VARCHAR" property="agentIdcardno" />
+        <result column="agent_name" jdbcType="VARCHAR" property="agentName" />
+        <result column="agent_open_bank_no" jdbcType="VARCHAR" property="agentOpenBankNo" />
+        <result column="agent_open_bank_name" jdbcType="VARCHAR" property="agentOpenBankName" />
+        <result column="agent_open_bank_code" jdbcType="VARCHAR" property="agentOpenBankCode" />
+  	</resultMap>
+  	
+  	<resultMap id="BaseResultMapExcel" type="cn.rebornauto.platform.business.vo.ExcelTemplateVO">
+	    <result column="agent_name" jdbcType="VARCHAR" property="agentName" />
+	    <result column="idcardno" jdbcType="VARCHAR" property="idcardno" />
+	    <result column="open_bank_no" jdbcType="VARCHAR" property="openBankNo" />
+	</resultMap>
+
+	<select id="selectAgentBankNoListByAgentId" resultMap="AgentBankNoVoMap">
+		select
+		agent_open_bank_no,agent_open_bank_name
+		from t_agent_bank_no_info
+		where agent_id=#{agentId}
+		GROUP BY id
+	</select>
+	
+	<select id="selectAgentInfoByAgentParam" resultMap="AgentInfoVOMap">
+		select t1.id agent_id,t1.agent_idcardno,t1.agent_name,t2.agent_open_bank_no,t2.agent_open_bank_name,t2.agent_open_bank_code 
+		from t_agent_info t1
+		left join t_agent_bank_no_info t2 on t2.agent_id = t1.id
+		left join t_agent_customer t3 on t3.agent_id = t1.id
+		where t2.data_status = 1
+		and t3.auth_status=2 and t3.sign_status=2 and  t3.data_status = 1
+		and t1.agent_idcardno = #{agentIdcardno,jdbcType=VARCHAR}
+		and t1.agent_name = #{agentName,jdbcType=VARCHAR}
+		and t2.agent_open_bank_no = #{agentOpenBankNo,jdbcType=VARCHAR}
+		and t3.customer_id=#{customerId,jdbcType=VARCHAR}
+	</select>
+	<select id="selectAgentListByCustomerId" resultMap="BaseResultMapExcel">
+		select t1.agent_name,t2.agent_open_bank_no open_bank_no
+		from t_agent_info t1
+		left join t_agent_bank_no_info t2 on t2.agent_id = t1.id
+		left join t_agent_customer t3 on t3.agent_id = t1.id
+		where t2.data_status = 1
+		and t3.auth_status=2 and t3.sign_status=2 and  t3.data_status = 1
+		and t3.customer_id=#{customerId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectAgentBankNoListAuthByAgentId" resultMap="AgentBankNoVoMap">
+		select a.agent_open_bank_no
+		from t_agent_bank_no_info a
+        left join t_agent_customer b on b.agent_id = a.agent_id
+		where  a.data_status = 1  and b.data_status = 1 
+			and b.auth_status = 2 and b.sign_status = 2
+			and a.agent_id=#{agentId,jdbcType=INTEGER}
+	</select>
+	
+	
+	<select id="selectAgentInfoListByCustomerId" resultMap="AgentInfoVOMap">
+		select t1.agent_name,t2.agent_open_bank_no,t1.agent_idcardno
+		from t_agent_info t1
+		left join t_agent_bank_no_info t2 on t2.agent_id = t1.id
+		left join t_agent_customer t3 on t3.agent_id = t1.id
+		where t2.data_status = 1
+		and t3.auth_status=2 and t3.sign_status=2 and  t3.data_status = 1
+		and t3.customer_id=#{customerId,jdbcType=VARCHAR}
+	</select>
+	
+	
+</mapper>

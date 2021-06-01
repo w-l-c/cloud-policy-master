@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.CustomerQuotaMapper">
+    <select id="selectByCustomerId" resultMap="BaseResultMap">
+        select * from t_customer_quota
+        where customer_id = #{customerId,jdbcType=VARCHAR}
+    </select>
+    <resultMap id="CustomerQuotaVOMap" type="cn.rebornauto.platform.business.vo.CustomerQuotaVo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="customer_balance" jdbcType="DECIMAL" property="customerBalance" />
+        <result column="frozen_amount" jdbcType="DECIMAL" property="frozenAmount" />
+        <result column="pending_appr_amount" jdbcType="DECIMAL" property="pendingApprAmount" />
+        <result column="loan_amount" jdbcType="DECIMAL" property="loanAmount" />
+        <result column="recharge_amount" jdbcType="DECIMAL" property="rechargeAmount" />
+
+    </resultMap>
+    <select id="selectVoByCustomerId" resultMap="CustomerQuotaVOMap">
+        select a.id,a.customer_id,a.customer_balance, a.pending_appr_amount,a.loan_amount,
+          a.recharge_amount, if(sum(c.amount)is null,0,sum(c.amount)) frozen_amount
+        from t_customer_quota a LEFT JOIN (SELECT customer_id cId,sum(tf.amount) amount
+        FROM t_transaction_flow tf where (pay_status = 4 or pay_status = 5 ) ) c ON a.customer_id = c.cId
+        where a.customer_id = #{customerId,jdbcType=VARCHAR}
+    </select>
+    <resultMap id="BaseResultVOMap" type="cn.rebornauto.platform.business.vo.CustomerTotalQuotaVo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="customer_id" jdbcType="VARCHAR" property="customerId" />
+        <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+        <result column="service_rate" jdbcType="DECIMAL" property="serviceRate" />
+        <result column="customer_balance" jdbcType="DECIMAL" property="customerBalance" />
+        <result column="available_balance" jdbcType="DECIMAL" property="availableBalance" />
+        <result column="frozen_amount" jdbcType="DECIMAL" property="frozenAmount" />
+        <result column="pending_appr_amount" jdbcType="DECIMAL" property="pendingApprAmount" />
+        <result column="loan_amount" jdbcType="DECIMAL" property="loanAmount" />
+        <result column="recharge_amount" jdbcType="DECIMAL" property="rechargeAmount" />
+        <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+        <result column="customerBalanceFin" jdbcType="VARCHAR" property="customerBalanceFin" />
+        <result column="availableBalanceFin" jdbcType="VARCHAR" property="availableBalanceFin" />
+        <result column="frozenAmountFin" jdbcType="VARCHAR" property="frozenAmountFin" />
+        <result column="pendingApprAmountFin" jdbcType="VARCHAR" property="pendingApprAmountFin" />
+        <result column="loanAmountFin" jdbcType="VARCHAR" property="loanAmountFin" />
+        <result column="rechargeAmountFin" jdbcType="VARCHAR" property="rechargeAmountFin" />
+    </resultMap>
+    <sql id="queryParam">
+        <if test="q.customerId != null and q.customerId != ''">
+            and a.customer_id like concat(concat('%',#{q.customerId,jdbcType=VARCHAR}),'%')
+        </if>
+        <if test="q.customerName != null and q.customerName != ''">
+            and b.customer_name like concat(concat('%',#{q.customerName,jdbcType=VARCHAR}),'%')
+        </if>
+    </sql>
+    <sql id="pageQuery">
+        <if test="p.offset != null and p.pageSize != null">
+            limit #{p.offset,jdbcType=INTEGER},#{p.pageSize,jdbcType=INTEGER}
+        </if>
+    </sql>
+    <select id="count" resultType="Integer">
+        select count(1) from t_customer_quota a LEFT JOIN t_customer_info b on a.customer_id = b.id
+        where 1=1
+        <include refid="queryParam"></include>
+    </select>
+    <select id="list" resultMap="BaseResultVOMap">
+        select a.id,a.customer_id,a.customer_balance,a.available_balance,
+        a.frozen_amount,a.pending_appr_amount,a.loan_amount,a.recharge_amount,
+        b.customer_name,b.service_rate, if((b.data_status) is null,0,(b.data_status)) data_status
+        from t_customer_quota a LEFT JOIN t_customer_info b on a.customer_id = b.id
+        where 1=1
+        <include refid="queryParam"></include>
+        order by a.id
+        <include refid="pageQuery"></include>
+    </select>
+    <select id="listAll" resultMap="BaseResultVOMap">
+        select a.id,a.customer_id,a.customer_balance,a.available_balance,
+        a.frozen_amount,a.pending_appr_amount,a.loan_amount,a.recharge_amount,
+        b.customer_name,b.service_rate, if((b.data_status) is null,0,(b.data_status)) data_status
+        ,Format(a.customer_balance, 2) customerBalanceFin
+        ,Format(a.available_balance, 2) availableBalanceFin
+        ,Format(a.frozen_amount, 2) frozenAmountFin
+        ,Format(a.pending_appr_amount, 2) pendingApprAmountFin
+        ,Format(a.loan_amount, 2) loanAmountFin
+        ,Format(a.recharge_amount, 2) rechargeAmountFin
+        from t_customer_quota a LEFT JOIN t_customer_info b on a.customer_id = b.id
+        where 1=1
+        <include refid="queryParam"></include>
+    </select>
+    <update id="addCustomerQuotaByCustomerId" >
+	  	update t_customer_quota 
+	  	set loan_amount = loan_amount + #{amount,jdbcType=DECIMAL}
+	  	,customer_balance = customer_balance - #{amount,jdbcType=DECIMAL}
+	  	,available_balance = available_balance - #{amount,jdbcType=DECIMAL}
+	  	where customer_id = #{customerId,jdbcType=VARCHAR} and data_status=1
+	</update>
+	
+	<update id="cancelCustomerQuotaByCustomerId" >
+	  	update t_customer_quota 
+	  	set loan_amount = loan_amount - #{amount,jdbcType=DECIMAL}
+	  	,customer_balance = customer_balance + #{amount,jdbcType=DECIMAL}
+	  	,available_balance = available_balance + #{amount,jdbcType=DECIMAL}
+	  	where customer_id = #{customerId,jdbcType=VARCHAR} and data_status=1
+	</update>
+	
+</mapper>

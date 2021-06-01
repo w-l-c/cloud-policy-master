@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.AgentQuotaMapper">
+	  <resultMap id="BaseResultMapVO" type="cn.rebornauto.platform.business.vo.AgentQuotaVO">
+	    <result column="open_bank_no" jdbcType="VARCHAR" property="openBankNo" />
+	    <result column="agent_idcardno" jdbcType="VARCHAR" property="agentIdcardno" />
+	    <result column="amount" jdbcType="DECIMAL" property="amount" />
+	    <result column="yearmonth" jdbcType="VARCHAR" property="yearmonth" />
+	    <result column="agent_name" jdbcType="VARCHAR" property="agentName" />
+	  </resultMap>
+		
+
+	  <update id="addAgentQuotaLoanAmount" >
+	  	update t_agent_quota 
+	  	set loan_amount=loan_amount + #{record.loanAmount,jdbcType=DECIMAL},
+		<if test="record.modifyoper != null">
+       		modifyoper = #{record.modifyoper,jdbcType=VARCHAR} ,
+      	</if>
+	  	modifytime = now()
+	  	where yearmonth = #{record.yearmonth,jdbcType=VARCHAR} 
+	  	and data_status=1
+	  	and agent_idcardno = #{record.agentIdcardno,jdbcType=VARCHAR}
+	  </update>
+	  
+	  <update id="cancelAgentQuotaLoanAmount" >
+	  	update t_agent_quota 
+	  	set loan_amount=loan_amount - #{record.loanAmount,jdbcType=DECIMAL},
+	  	<if test="record.modifyoper != null">
+       		modifyoper = #{record.modifyoper,jdbcType=VARCHAR} ,
+      	</if>
+	  	modifytime = now()
+	  	where yearmonth = #{record.yearmonth,jdbcType=VARCHAR} 
+	  	and data_status=1
+	  	and agent_idcardno = #{record.agentIdcardno,jdbcType=VARCHAR}
+	  </update>
+	  
+	  <select id="getSumPersonalQuotaByOrderId" parameterType="java.lang.Integer" resultMap="BaseResultMapVO">
+	  	select t2.open_bank_no,t5.agent_idcardno,sum(t2.amount) amount,DATE_FORMAT(NOW(),'%Y%m') yearmonth,t5.agent_name
+			from t_order t1
+			left join t_order_detail t2 on t1.id=t2.order_id
+			left join t_agent_bank_no_info t3 on t2.open_bank_no = t3.agent_open_bank_no
+		    left join t_transaction_flow  t4 on t4.order_detail_id = t2.id
+		inner  join t_agent_info t5 on t5.id = t3.agent_id
+			where t1.id =#{orderId,jdbcType=INTEGER} and t1.data_status = 1 and t2.data_status = 1 and t3.data_status = 1
+		        and (t4.pay_status is null or t4.pay_status =3)
+		group by t2.open_bank_no
+	  </select>
+	  
+	  <select id="selectAgentQuotaList" resultMap="BaseResultMap">
+	  	select * 
+	  	from t_agent_quota 
+		where data_status = 1
+		and agent_idcardno in 
+		<foreach collection="list" item = "item" index="index" open="(" close=")" separator=",">
+	      #{item}
+	    </foreach>
+		and yearmonth = DATE_FORMAT(NOW(),'%Y%m')
+		 
+	  </select>
+
+</mapper>

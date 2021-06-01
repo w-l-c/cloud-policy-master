@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.rebornauto.platform.business.dao.InvoiceMapper">
+    <resultMap id="BaseResultVoMap" type="cn.rebornauto.platform.business.vo.InvoiceVo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="order_id" jdbcType="INTEGER" property="orderId" />
+        <result column="invoice_time" jdbcType="TIMESTAMP" property="invoiceTime" />
+        <result column="customer_id" jdbcType="VARCHAR" property="customerId" />
+        <result column="agent_commission" jdbcType="DECIMAL" property="agentCommission" />
+        <result column="real_payment" jdbcType="DECIMAL" property="realPayment" />
+        <result column="recharge" jdbcType="INTEGER" property="recharge" />
+        <result column="invoice_status" jdbcType="INTEGER" property="invoiceStatus" />
+        <result column="express_company" jdbcType="VARCHAR" property="expressCompany" />
+        <result column="express_no" jdbcType="VARCHAR" property="expressNo" />
+        <result column="invoice_amount" jdbcType="DECIMAL" property="invoiceAmount" />
+        <result column="invoice_title" jdbcType="VARCHAR" property="invoiceTitle" />
+        <result column="taxpayer_type" jdbcType="INTEGER" property="taxpayerType" />
+        <result column="taxpayer_number" jdbcType="VARCHAR" property="taxpayerNumber" />
+        <result column="reg_address" jdbcType="VARCHAR" property="customerRegAddress" />
+        <result column="open_bank" jdbcType="VARCHAR" property="customerOpenBank" />
+        <result column="open_bank_no" jdbcType="VARCHAR" property="customerOpenBankNo" />
+        <result column="invoice_content" jdbcType="VARCHAR" property="invoiceContent" />
+        <result column="receiver" jdbcType="VARCHAR" property="receiver" />
+        <result column="mobile" jdbcType="VARCHAR" property="customerMobile" />
+        <result column="address" jdbcType="VARCHAR" property="customerAddress" />
+        <result column="invoice_pic_url" jdbcType="VARCHAR" property="invoicePicUrl" />
+        <result column="out_invoice_status" jdbcType="INTEGER" property="outInvoiceStatus" />
+        <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+        <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+    </resultMap>
+    <sql id="query">
+        <if test="q.customerId != null and q.customerId != ''">
+            and a.customer_id like concat(concat('%',#{q.customerId,jdbcType=VARCHAR}),'%')
+        </if>
+        <if test="q.customerName != null and q.customerName != ''">
+            and b.customer_name like concat(concat('%',#{q.customerName,jdbcType=VARCHAR}),'%')
+        </if>
+        <if test="q.invoiceTime !=null and q.invoiceTime!='' ">
+            and DATE_FORMAT(a.invoice_time,'%Y-%m-%d') between #{q.startTime,jdbcType=TIMESTAMP} and
+            #{q.endTime,jdbcType=TIMESTAMP}
+        </if>
+    </sql>
+    <sql id="pageQuery">
+        <if test="p.offset != null and p.pageSize != null">
+            limit #{p.offset,jdbcType=INTEGER},#{p.pageSize,jdbcType=INTEGER}
+        </if>
+
+    </sql>
+    <select id="count" resultType="Integer">
+        select count(1) from t_invoice a LEFT JOIN t_customer_info b on a.customer_id = b.id
+        where a.data_status = 1
+        <include refid="query"></include>
+    </select>
+    <select id="list" resultMap="BaseResultVoMap">
+        SELECT a.*,b.customer_name
+        from t_invoice a LEFT JOIN t_customer_info b on a.customer_id = b.id
+        where a.data_status = 1
+        <include refid="query"></include>
+        order by invoice_time DESC
+        <include refid="pageQuery"></include>
+    </select>
+    <select id="selectByOrderId" resultType="cn.rebornauto.platform.business.entity.Invoice">
+        select id, order_id, invoice_time, customer_id,agent_commission, real_payment, recharge,
+        invoice_status, express_company, express_no, invoice_amount, invoice_title, taxpayer_type,
+        taxpayer_number, reg_address, open_bank, open_bank_no, invoice_content, receiver, mobile, address,
+        invoice_pic_url, out_invoice_status, data_status, remark, createoper, createtime, modifyoper, modifytime
+        from t_invoice
+        where order_id = #{orderId, jdbcType=INTEGER}
+    </select>
+</mapper>
